@@ -31,10 +31,10 @@ function GridZone:static_move_pending() return Actor.static_move_pending(self) o
 
 --- Helper: flush layout
 function GridZone:flush_layout(dt)
-    if self.refresh_focus_projection_state and self:refresh_focus_projection_state() then self.card_layout_dirty, self.pawn_layout_dirty = Y, Y end
+    if self.refresh_focus_projection_state and self:refresh_focus_projection_state() then self.card_layout_dirty = Y end
     local live, was_live = _card_layout_is_live(self), self.card_layout_live
     self.card_layout_live = live
-    if self.card_layout_dirty or live or was_live then self:align_cards({ dt = dt }); self.card_layout_dirty = N; if self.focus_projection_pending then self.pawn_layout_dirty = Y end end
+    if self.card_layout_dirty or live or was_live then self:align_cards({ dt = dt }); self.card_layout_dirty = N end
     if self.pawn_layout_dirty then self:align_pawns(); self.pawn_layout_dirty = N end
 end
 
@@ -92,7 +92,6 @@ function GridZone:emplace_pawn(pawn, r_idx, c_idx)
 
     occupants[#occupants + 1] = pawn
     pawn:place_on_cell(self, r_idx, c_idx)
-    if pawn == self.gm.field_pawn and self.mark_focus_projection_dirty then self:mark_focus_projection_dirty() end
     self:align_pawn(pawn, r_idx, c_idx)
     self.pawn_layout_dirty = N
     return pawn

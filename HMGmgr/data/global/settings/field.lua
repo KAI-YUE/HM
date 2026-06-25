@@ -1,3 +1,5 @@
+local Y, N = true, false
+
 return function (self)
 -----------------------------
 --- Projection / field cfg
@@ -14,11 +16,11 @@ return function (self)
     }
 
     local focus_projection = {
-        enabled    = false, --- blend edge cells toward a center-view quad map while camera is pawn-focused.
+        enabled    = Y,     --- blend edge cells toward a center-view quad map while camera is pawn-focused.
         zoom_start = 1.05,  --- below this zoom, use the whole-field projection.
         zoom_end   = 1.60,  --- by this zoom, use max_weight of the focus projection.
         max_weight = 0.82,  --- keep some whole-field shape so the board still reads as one object.
-        smoothing  = 12,    --- visual quad easing speed.
+        smoothing  = 42,     --- 0 snaps quad reassignment after pawn landing.
         snap       = 0.002, --- settle threshold for smoothed quad corners.
     }
 

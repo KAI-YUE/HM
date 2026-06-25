@@ -25,7 +25,7 @@ end
 ------------------------------------------------------
 --- Helper: sync_projected quad
 local function _sync_projected_quad(self, card, r_idx, c_idx, args)
-    if card.field_reveal then return end
+    if card.field_reveal and not (self.focus_projection_active or self.focus_projection_pending) then return end
 
     local projector = self.projector
     if not projector or not card then return end
@@ -130,11 +130,20 @@ end
 ---_______________________
 --- align pawn at 
 ---_______________________
+--- Helper: pawn cell metrics
+local function _pawn_cell_metrics(self, r_idx, c_idx, card)
+    if not self.focus_projection_active then return self:get_current_cell_metrics(r_idx, c_idx) end
+    local quad = self.projector and self.projector:get_local_cell_quad(r_idx, c_idx, card.T)
+    if not quad then return self:get_current_cell_metrics(r_idx, c_idx) end
+    local row, base = self.cells[r_idx], self:get_cell_metrics(r_idx, c_idx)
+    return self:build_cell_metrics_from_quad(quad, base and base.row_scale or (row and row.row_scale)) or self:get_current_cell_metrics(r_idx, c_idx)
+end
+
 function GridZone:align_pawn(pawn, r_idx, c_idx)
     local card  = self.cells[r_idx] and self.cells[r_idx][c_idx]
     if not pawn or not card then return end
 
-    local metrics = self:get_current_cell_metrics(r_idx, c_idx)
+    local metrics = _pawn_cell_metrics(self, r_idx, c_idx, card)
     if not metrics then return end
 
     local gm, pT, cT          = self.gm, pawn.T, card.T

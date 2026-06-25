@@ -114,7 +114,11 @@ function Pawn:update_toddle(dt)
     offset.x  = from.x + (target.x - from.x)*mix
     offset.y  = from.y + (target.y - from.y)*mix
     offset.r  = from.r + (target.r - from.r)*mix
-    if p >= 1 then td.active = N; T.x, T.y, T.r = anchor.x + offset.x, anchor.y + offset.y, anchor.r + offset.r; return end
+    if p >= 1 then
+        td.active = N; T.x, T.y, T.r = anchor.x + offset.x, anchor.y + offset.y, anchor.r + offset.r
+        if self.focus_projection_after_land and self.zone and self.zone.mark_focus_projection_dirty then self.focus_projection_after_land = N; self.zone:mark_focus_projection_dirty() end
+        return
+    end
 
     local wave     = sin(2 * pi * p)
     local envelope = 1 - p

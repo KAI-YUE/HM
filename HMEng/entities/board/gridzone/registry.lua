@@ -105,6 +105,8 @@ local function _build_cell_metrics(self, quad, row_scale)
         quad_h    = qh,    scale    = _s,  row_scale = _rs }
 end
 
+function GridZone:build_cell_metrics_from_quad(quad, row_scale) return _build_cell_metrics(self, quad, row_scale) end
+
 ---_______________________________
 --- main: rebuild cell metrics 
 ---_______________________________

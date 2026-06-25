@@ -102,6 +102,15 @@ function GridZone:mark_focus_projection_dirty()
     self:mark_card_layout_dirty()
 end
 
+--- Helper: queue focus projection after pawn lands
+function GridZone:queue_focus_projection_after_land(pawn)
+    local cfg = self:_focus_projection_cfg();        if not cfg or cfg.enabled == N then return end
+    if pawn ~= (self.gm and self.gm.field_pawn) then return end
+    local td = pawn.toddle
+    if td and td.active then pawn.focus_projection_after_land = Y; return end
+    self:mark_focus_projection_dirty()
+end
+
 ------------------------------------------------------
 --- focus quad build
 ------------------------------------------------------
@@ -146,6 +155,7 @@ function GridZone:_smooth_projected_quad(card, target, dt)
     local cfg = self:_focus_projection_cfg() or {}
     local mesh_card = card.children and card.children.mesh_card
     local current = mesh_card and mesh_card.projected_quad
+    if cfg.smoothing == N or cfg.smoothing == 0 then return target end
     if not (current and dt and dt > 0) then return target end
 
     local a = min(1, (cfg.smoothing or 12)*dt)
