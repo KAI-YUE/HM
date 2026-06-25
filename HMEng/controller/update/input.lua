@@ -14,6 +14,7 @@ return function(Controller)
 --- Helper: wake zone layout
 local function _wake_zone_layout(node)
     local zone = node and node.zone
+    if node and node.is and node:is(Pawn) and zone and zone.config and zone.config.type == "field" then return end
     if node and node.is and node:is(Pawn) and zone and zone.mark_pawn_layout_dirty then zone:mark_pawn_layout_dirty(); return end
     if zone and zone.mark_card_layout_dirty then zone:mark_card_layout_dirty() end
 end

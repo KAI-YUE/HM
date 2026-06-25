@@ -20,9 +20,17 @@ return function (self)
         zoom_start         = 1.05,         --- below this zoom, use the whole-field projection.
         zoom_end           = 1.60,         --- by this zoom, use max_weight of the focus projection.
         max_weight         = 0.5,          --- keep some whole-field shape so the board still reads as one object.
-        smoothing          = 0,            --- 0 snaps quad reassignment after pawn landing.
+        smoothing          = 80,            --- 0 snaps quad reassignment when projection commits.
+        smooth_radius      = 3,            --- only cells near the focus anchor morph; far cells snap for FPS.
+        commit_dt          = 1/60,         --- first runtime commit tick; larger starts the smoothing closer to target.
         track_zoom_settle  = N,            --- if true, projection follows camera.zoom during zoom easing.
         camera_anchor      = Y,            --- camera/POV anchor changes only when the destination leaves the safe rect.
+        camera_smooth_time = 1.62,
+        camera_max_speed   = 10,
+        
+        ----------------------------
+        --- debugging params
+        ----------------------------
         debug_anchor_row   = 3,            --- optional test anchor cell for camera focus.
         debug_anchor_col   = 3,
         debug_focus_step   = 1,

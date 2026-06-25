@@ -111,6 +111,7 @@ function Controller:_debug_toggle_field_focus_projection(key)
     local zone = gm and gm.gridzone;                         if not (zone and zone.projector and zone.align_cards) then return end
     local cfg = zone._focus_projection_cfg and zone:_focus_projection_cfg(); if not cfg then return end
 
+    local committed = N
     if zone.focus_projection_active then
         zone.focus_projection_active, zone.focus_projection_pending = N, N
         zone.focus_projection_key, zone.focus_projection_weight_last = nil, nil
@@ -119,10 +120,11 @@ function Controller:_debug_toggle_field_focus_projection(key)
         cell = pawn and pawn.zone == zone and pawn.cell or zone.field_view_anchor_cell
         if cell and cell.row and cell.col then zone.field_view_anchor_cell = { row = cell.row, col = cell.col } end
         zone.focus_projection_active, zone.focus_projection_pending = Y, Y
-        if zone.refresh_focus_projection_state then zone:refresh_focus_projection_state() end
+        committed = zone.commit_field_view_projection and zone:commit_field_view_projection()
     end
 
-    zone:align_cards({ dt = 0 })
+    if not committed then zone:align_cards({ dt = 0 }) end
+    zone:align_pawns()
     zone.card_layout_dirty = N
     return Y
 end
@@ -148,8 +150,8 @@ function Controller:_debug_nudge_field_anchor_cell(key)
     local row = min(max(1, cell.row + dir.r), zone.n_rows or cell.row)
     local col = min(max(1, cell.col + dir.c), zone.n_cols or cell.col)
     local p = zone:set_field_view_anchor(row, col);           if not p then return end
+    if zone.focus_projection_active then if zone.commit_field_view_projection then zone:commit_field_view_projection() else zone:align_cards({ dt = 0 }) end; zone:align_pawns(); p = zone:field_view_cell_point(row, col) or p end
     zone.debug_focus_point = { x = p.x, y = p.y }
-    if zone.focus_projection_active then if zone.refresh_focus_projection_state then zone:refresh_focus_projection_state() end; zone:align_cards({ dt = 0 }) end
     return Y
 end
 

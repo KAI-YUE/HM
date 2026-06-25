@@ -88,6 +88,8 @@ local function resolve_world_point(x, y, obj)
     return x, y
 end
 
+function Camera:resolve_object_point(obj, x, y) return resolve_world_point(x or 0, y or 0, obj) end
+
 ---__________________________
 --- main: get target center
 ---__________________________

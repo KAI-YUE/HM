@@ -7,7 +7,16 @@ return function (GridZone)
 ------------------------------------------------------
 --- Hard set cards | T
 ------------------------------------------------------
+--- Helper: hard set actor visual transform
+local function _hard_set_actor_VT(actor)
+    local T, VT = actor and actor.T, actor and actor.VT;        if not (T and VT) then return end
+    VT.x, VT.y, VT.w, VT.h, VT.r, VT.scale = T.x, T.y, T.w, T.h, T.r, T.scale
+    local v = actor.velocity;                                  if v then v.x, v.y, v.w, v.h, v.r, v.scale = 0, 0, 0, 0, 0, 0 end
+    if actor.calculate_parallax then actor:calculate_parallax() end
+end
+
 function GridZone:hard_set_cards()  local cells = self.cells; for i, row in pairs(cells) do for j, col in ipairs(row) do col:hard_set_T(); col:calculate_parallax() end end end
+function GridZone:hard_set_pawns()  local pawns = self.pawns; if not pawns then return end; self:align_pawns(); for _, row in pairs(pawns) do for _, occupants in pairs(row) do for _, pawn in ipairs(occupants) do if pawn.hard_set_T then pawn:hard_set_T() else _hard_set_actor_VT(pawn) end end end end end
 function GridZone:hard_set_T(x, y, w, h)
     local T = self.T
     x, y, w, h = x or T.x, y or T.y, w or T.w, h or T.h
@@ -16,7 +25,7 @@ function GridZone:hard_set_T(x, y, w, h)
     self:rebuild_cell_metrics()
     self:align_cards()
     self:hard_set_cards()
-    self:align_pawns()
+    self:hard_set_pawns()
     self.card_layout_dirty, self.pawn_layout_dirty = N, N
 end
 
@@ -29,6 +38,7 @@ local function _sync_projected_quad(self, card, r_idx, c_idx, args)
     if not projector or not card then return end
     card:promote_to_field_card()
 
+    args = args or {}; args.r_idx, args.c_idx = r_idx, c_idx
     local quad = self.projected_quad_for_card and self:projected_quad_for_card(r_idx, c_idx, card, args) or projector:get_local_cell_quad(r_idx, c_idx, card.T)
     if not quad then return end
 
@@ -85,7 +95,7 @@ end
 ------------------------------------------------------
 --- align_cards
 ------------------------------------------------------
-function GridZone:align_cards(args) local cfg = self.config; self.focus_projection_pending = N; if (cfg.type or "field") == "field" then self:align_filed(args) end; self.card_layout_dirty = N end
+function GridZone:align_cards(args) local cfg = self.config; self.focus_projection_pending, self.focus_projection_pending_cells = N, nil; if (cfg.type or "field") == "field" then self:align_filed(args) end; self.card_layout_dirty = N end
 
 -----------------------------------------------------
 --- align_pawn_at
@@ -129,19 +139,13 @@ end
 --- align pawn at 
 ---_______________________
 --- Helper: pawn cell metrics
-local function _pawn_cell_metrics(self, r_idx, c_idx, card)
-    if not self.focus_projection_active then return self:get_current_cell_metrics(r_idx, c_idx) end
-    local quad = self.projector and self.projector:get_local_cell_quad(r_idx, c_idx, card.T)
-    if not quad then return self:get_current_cell_metrics(r_idx, c_idx) end
-    local row, base = self.cells[r_idx], self:get_cell_metrics(r_idx, c_idx)
-    return self:build_cell_metrics_from_quad(quad, base and base.row_scale or (row and row.row_scale)) or self:get_current_cell_metrics(r_idx, c_idx)
-end
+local function _pawn_cell_metrics(self, r_idx, c_idx) return self:get_current_cell_metrics(r_idx, c_idx) end
 
 function GridZone:align_pawn(pawn, r_idx, c_idx)
     local card  = self.cells[r_idx] and self.cells[r_idx][c_idx]
     if not pawn or not card then return end
 
-    local metrics = _pawn_cell_metrics(self, r_idx, c_idx, card)
+    local metrics = _pawn_cell_metrics(self, r_idx, c_idx)
     if not metrics then return end
 
     local gm, pT, cT          = self.gm, pawn.T, card.T

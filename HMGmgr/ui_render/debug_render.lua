@@ -45,7 +45,10 @@ function GMgr:debug_field_projection_mode()
     local step = zone.debug_focus_step or cfg.debug_focus_step or 1
     local msg = zone.focus_projection_active and "Focus" or "Global"
     if fp then msg = msg .. ("\nfocus: %.2f, %.2f"):format(fp.x or 0, fp.y or 0) end
+    if cam then msg = msg .. ("\ncam: %.2f, %.2f"):format(cam.x or 0, cam.y or 0) end
+    if cam and cam.get_desired_position then local dx, dy = cam:get_desired_position(); msg = msg .. ("\ndes: %.2f, %.2f"):format(dx or 0, dy or 0) end
     if cell and cell.row and cell.col then msg = msg .. ("\ncell: %s, %s"):format(tostring(cell.row), tostring(cell.col)) end
+    if cell and zone.field_view_cell_debug_points then local p = zone:field_view_cell_debug_points(cell.row, cell.col); if p then msg = msg .. ("\nquad: %.2f, %.2f\nworld: %.2f, %.2f"):format(p.quad.x or 0, p.quad.y or 0, p.world.x or 0, p.world.y or 0) end end
     msg = msg .. ("\nstep: %.2f"):format(step)
 
     local scale, pad = 1.25, 12

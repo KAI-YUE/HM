@@ -43,7 +43,7 @@ end
 
 local function _card_layout_is_live(self)
     local cfg = self.config or {}
-    if self.focus_projection_pending or (self.focus_projection_state_dirty and self:focus_projection_state_dirty()) then return Y end
+    if self.focus_projection_state_dirty and self:focus_projection_state_dirty() then return Y end
     for r_idx = 1, self.n_rows do
         local row = self.cells and self.cells[r_idx]
         for c_idx = 1, self.n_cols do
@@ -55,19 +55,26 @@ local function _card_layout_is_live(self)
     return cfg.live_layout == Y
 end
 
+local function _collect_focus_projection_cells(self)
+    if not self.take_focus_projection_pending_cells then return {} end
+    return self:take_focus_projection_pending_cells()
+end
+
 --- Helper: static move pending
-function GridZone:static_move_pending() return Actor.static_move_pending(self) or _card_layout_is_live(self) or self.reveal_layout_live or _field_reveal_any_live(self) end
+function GridZone:static_move_pending() return Actor.static_move_pending(self) or self.focus_projection_pending or _card_layout_is_live(self) or self.reveal_layout_live or _field_reveal_any_live(self) end
 
 --- Helper: flush layout
 function GridZone:flush_layout(dt)
-    if self.refresh_focus_projection_state and self:refresh_focus_projection_state() then self.card_layout_dirty = Y end
+    if self.refresh_focus_projection_state and self:refresh_focus_projection_state() then self.card_layout_dirty, self.pawn_layout_dirty = Y, Y end
     local live, was_live = _card_layout_is_live(self), self.card_layout_live
     local reveal_cells, reveal_live = _collect_reveal_layout_cells(self)
+    local focus_cells = _collect_focus_projection_cells(self)
     local full_align = self.card_layout_dirty or live or was_live
     self.card_layout_live = live
     self.reveal_layout_live = reveal_live
     if full_align then self:align_cards({ dt = dt }); self.card_layout_dirty = N end
     if not full_align then for _, cell in ipairs(reveal_cells) do self:align_card_at(cell.row, cell.col, { dt = dt }) end end
+    if not full_align then for _, cell in ipairs(focus_cells) do self:align_card_at(cell.row, cell.col, { dt = dt }) end end
     if self.pawn_layout_dirty then self:align_pawns(); self.pawn_layout_dirty = N end
 end
 

@@ -44,10 +44,10 @@ function Pawn:move_to_cell(r_idx, c_idx)
     if cell.row == r_idx and cell.col == c_idx then return Y end
 
     local prev_row, prev_col = cell.row, cell.col
-    local view_anchor_changed = zone.prepare_field_view_move and zone:prepare_field_view_move(self, r_idx, c_idx)
+    if zone.prepare_field_view_move then zone:prepare_field_view_move(self, r_idx, c_idx) end
     zone:remove_pawn(self)
 
-    if zone:emplace_pawn(self, r_idx, c_idx) then self:begin_toddle(); if view_anchor_changed and zone.queue_focus_projection_after_land then zone:queue_focus_projection_after_land(self) end; return Y end
+    if zone:emplace_pawn(self, r_idx, c_idx) then self:begin_toddle(); return Y end
     if prev_row and prev_col then zone:emplace_pawn(self, prev_row, prev_col) end
     return N
 end
