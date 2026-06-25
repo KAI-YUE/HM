@@ -57,9 +57,9 @@ local function _place_field_cloud_like_fx(gm, args)
 end
 
 function M.place_shader_fx(gm, opts)
-    opts = opts or {};                                      if opts.silent_start then return end
-    local EM, Tcloud = gm.E_MANAGER, IntroTimeline.cloud
-    _enqueue_after(EM, Tcloud.field_spawn, function() gm.field_cloud_fx = _place_field_cloud_like_fx(gm, { shader_code = "vcloud", motion = IntroTimeline.cloud }); return Y end )
+    -- opts = opts or {};                                      if opts.silent_start then return end
+    -- local EM, Tcloud = gm.E_MANAGER, IntroTimeline.cloud
+    -- _enqueue_after(EM, Tcloud.field_spawn, function() gm.field_cloud_fx = _place_field_cloud_like_fx(gm, { shader_code = "vcloud", motion = IntroTimeline.cloud }); return Y end )
 end
 
 return M

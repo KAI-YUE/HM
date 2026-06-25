@@ -14,6 +14,7 @@ function GridZone:mark_layout_dirty()      local gm = self.gm; if gm and gm.mark
 --- Helper: card layout is live
 local function _card_layout_is_live(self)
     local cfg = self.config or {}
+    if self.focus_projection_pending or (self.focus_projection_state_dirty and self:focus_projection_state_dirty()) then return Y end
     for r_idx = 1, self.n_rows do
         local row = self.cells and self.cells[r_idx]
         for c_idx = 1, self.n_cols do
@@ -29,10 +30,11 @@ end
 function GridZone:static_move_pending() return Actor.static_move_pending(self) or _card_layout_is_live(self) end
 
 --- Helper: flush layout
-function GridZone:flush_layout()
+function GridZone:flush_layout(dt)
+    if self.refresh_focus_projection_state and self:refresh_focus_projection_state() then self.card_layout_dirty, self.pawn_layout_dirty = Y, Y end
     local live, was_live = _card_layout_is_live(self), self.card_layout_live
     self.card_layout_live = live
-    if self.card_layout_dirty or live or was_live then self:align_cards(); self.card_layout_dirty = N end
+    if self.card_layout_dirty or live or was_live then self:align_cards({ dt = dt }); self.card_layout_dirty = N; if self.focus_projection_pending then self.pawn_layout_dirty = Y end end
     if self.pawn_layout_dirty then self:align_pawns(); self.pawn_layout_dirty = N end
 end
 
@@ -43,9 +45,10 @@ function GridZone:update(dt) end
 function GridZone:move(dt)
     local was_new_align = self.new_align
     local moved = Actor.move(self, dt)
-    if not moved and not (self.card_layout_dirty or self.pawn_layout_dirty or self.card_layout_live or self.pawn_layout_live) then return end
+    local focus_dirty = self.focus_projection_pending or (self.focus_projection_state_dirty and self:focus_projection_state_dirty())
+    if not moved and not (self.card_layout_dirty or self.pawn_layout_dirty or self.card_layout_live or self.pawn_layout_live or focus_dirty) then return end
     if was_new_align then self:mark_layout_dirty() end
-    self:flush_layout()
+    self:flush_layout(dt)
 end
 
 -----------------------------------------------
@@ -89,6 +92,7 @@ function GridZone:emplace_pawn(pawn, r_idx, c_idx)
 
     occupants[#occupants + 1] = pawn
     pawn:place_on_cell(self, r_idx, c_idx)
+    if pawn == self.gm.field_pawn and self.mark_focus_projection_dirty then self:mark_focus_projection_dirty() end
     self:align_pawn(pawn, r_idx, c_idx)
     self.pawn_layout_dirty = N
     return pawn

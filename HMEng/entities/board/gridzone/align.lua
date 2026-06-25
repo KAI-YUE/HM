@@ -24,14 +24,14 @@ end
 --- align_card_at
 ------------------------------------------------------
 --- Helper: sync_projected quad
-local function _sync_projected_quad(self, card, r_idx, c_idx)
+local function _sync_projected_quad(self, card, r_idx, c_idx, args)
     if card.field_reveal then return end
 
     local projector = self.projector
     if not projector or not card then return end
     card:promote_to_field_card()
 
-    local quad = projector:get_local_cell_quad(r_idx, c_idx, card.T)
+    local quad = self.projected_quad_for_card and self:projected_quad_for_card(r_idx, c_idx, card, args) or projector:get_local_cell_quad(r_idx, c_idx, card.T)
     if not quad then return end
 
     card:assign_field_quad(quad)
@@ -49,7 +49,7 @@ end
 --__________________
 -- main
 --__________________
-function GridZone:align_card_at(r_idx, c_idx)
+function GridZone:align_card_at(r_idx, c_idx, args)
     local cfg, T, cells   = self.config, self.T, self.cells
     local n_cols, n_rows  = self.n_cols, self.n_rows
     if n_cols <= 0 or n_rows <= 0 or not cells then return end
@@ -81,13 +81,13 @@ function GridZone:align_card_at(r_idx, c_idx)
 
     local csp = card.shadow_parallax
     if csp then cT.x, cT.y = cT.x + csp.x/30, cT.y + csp.y/30 end
-    _sync_projected_quad(self, card, r_idx, c_idx)
+    _sync_projected_quad(self, card, r_idx, c_idx, args)
 end
 
 ------------------------------------------------------
 --- align_cards
 ------------------------------------------------------
-function GridZone:align_cards(args) local cfg = self.config; if (cfg.type or "field") == "field" then self:align_filed() end; self.card_layout_dirty = N end
+function GridZone:align_cards(args) local cfg = self.config; self.focus_projection_pending = N; if (cfg.type or "field") == "field" then self:align_filed(args) end; self.card_layout_dirty = N end
 
 -----------------------------------------------------
 --- align_pawn_at
@@ -180,11 +180,11 @@ end
 ------------------------------------------------------
 --- align_filed 
 ------------------------------------------------------
-function GridZone:align_filed()
+function GridZone:align_filed(args)
     local n_cols, n_rows, cells = self.n_cols, self.n_rows, self.cells
     if n_cols <= 0 or n_rows <= 0 or not cells then return end
 
-    for i = 1, n_rows do for j = 1, n_cols do self:align_card_at(i, j) end end
+    for i = 1, n_rows do for j = 1, n_cols do self:align_card_at(i, j, args) end end
 end
 
 

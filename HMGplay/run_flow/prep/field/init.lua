@@ -1,7 +1,7 @@
 local CameraPrep   = require("HMGplay.run_flow.prep.field.camera")
 local PawnPrep     = require("HMGplay.run_flow.prep.field.pawns")
 local GridzonePrep = require("HMGplay.run_flow.prep.field.gridzone")
-local ShaderFxPrep = require("HMGplay.run_flow.prep.field.shader_fx")
+local ShaderFxPrep = require("HMGplay.run_flow.prep.field.cloud_fx")
 
 local M = {}
 

@@ -1,5 +1,6 @@
 local shared   = require("HMEng.controller.update.shared")
 local Card     = require("HMEng.entities.card")
+local Pawn     = require("HMEng.entities.pawn")
 local xf_dist  = require("HMfns.utils.math.math_utils").xf_dist
 
 local enqueue_after = shared.enqueue_after
@@ -10,9 +11,10 @@ return function(Controller)
 -----------------------------
 --- wake layout
 ----------------------------
---- Helper: wake card zone layout
+--- Helper: wake zone layout
 local function _wake_zone_layout(node)
     local zone = node and node.zone
+    if node and node.is and node:is(Pawn) and zone and zone.mark_pawn_layout_dirty then zone:mark_pawn_layout_dirty(); return end
     if zone and zone.mark_card_layout_dirty then zone:mark_card_layout_dirty() end
 end
 

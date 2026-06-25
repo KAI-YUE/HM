@@ -117,6 +117,7 @@ function Controller:_snap_field_focus(dir)
     _clear_cursor_hover(self)
     local current = dir == 0 and _field_start_cell(gm) or self.field_focus_cell or _field_start_cell(gm)
     self.field_focus_cell = _next_field_cell(self, gm, current, dir)
+    if gm.gridzone and gm.gridzone.mark_focus_projection_dirty then gm.gridzone:mark_focus_projection_dirty() end
     _clear_current_focus(self)
     return self.field_focus_cell and Y or N
 end

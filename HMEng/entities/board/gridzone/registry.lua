@@ -138,6 +138,13 @@ end
 --- get projected quad at 
 ----------------------------------------------------
 function GridZone:get_projected_quad_at(r_idx, c_idx)
+    local row = self.cells and self.cells[r_idx]
+    local card = row and row[c_idx]
+    local quad = card and card.get_projected_quad and card:get_projected_quad()
+    if quad then
+        local T = card.T or {}
+        return { { x = quad[1].x + (T.x or 0), y = quad[1].y + (T.y or 0) }, { x = quad[2].x + (T.x or 0), y = quad[2].y + (T.y or 0) }, { x = quad[3].x + (T.x or 0), y = quad[3].y + (T.y or 0) }, { x = quad[4].x + (T.x or 0), y = quad[4].y + (T.y or 0) } }
+    end
     local metrics = self:get_cell_metrics(r_idx, c_idx)
     return metrics and _clone_quad(metrics.quad) 
 end

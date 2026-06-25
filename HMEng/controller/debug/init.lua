@@ -11,6 +11,7 @@ local random_pick = TabUtils.random_pick
 local play_clip   = SoundUtils.play_clip
 
 local Y, N = true, false
+local PAWN_ARROW_KEYS = { left = Y, up = Y, down = Y, right = Y }
 
 return function (Controller)
 ------------------------------------------------------
@@ -103,6 +104,10 @@ end
 function Controller:_debug_panel(key)
     if ModeSwitch.handle(self, key) then return end
     if self.debug_gamepad_mode then return end
+    if PAWN_ARROW_KEYS[key] then
+        local ht, Pawn = self.hovering.target, require("HMEng.entities.pawn")
+        if ht and ht:is(Pawn) then self:_pawn_action(key); return end
+    end
     if self:_debug_hud_action(key) then return end
     if self:_debug_begin_new_run(key) then return end
     if BattleDebug.handle(self, key) then return end
