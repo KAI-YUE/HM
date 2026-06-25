@@ -1,5 +1,6 @@
 local U = require("HMEng.entities.board.gridzone.focus_projection.utils")
 
+local max, min, sqrt = math.max, math.min, math.sqrt
 local Y, N = true, false
 
 return function (GridZone)
@@ -36,6 +37,31 @@ function GridZone:set_field_view_anchor(r_idx, c_idx)
     return point
 end
 
+local function _copy_cell(cell) return cell and cell.row and cell.col and { row = cell.row, col = cell.col } end
+local function _dist(x1, y1, x2, y2) local dx, dy = (x2 or 0) - (x1 or 0), (y2 or 0) - (y1 or 0); return sqrt(dx*dx + dy*dy) end
+
+function GridZone:update_field_view_transition()
+    local tr, cam = self.field_view_transition, self.gm and self.gm.camera
+    if not (tr and tr.active and cam) then return tr and (tr.progress or 1) or 1 end
+    local total = max(tr.total or 0, 1e-6)
+    tr.progress = min(1, max(0, 1 - _dist(cam.x, cam.y, tr.tx, tr.ty)/total))
+    if tr.progress >= ((self:_focus_projection_cfg() or {}).transition_snap or 0.985) then tr.progress, tr.active = 1, N end
+    return tr.progress
+end
+
+function GridZone:begin_field_view_transition(r_idx, c_idx)
+    local cam = self.gm and self.gm.camera
+    local from = _copy_cell(self.field_view_anchor_cell) or { row = r_idx, col = c_idx }
+    local sx, sy = cam and cam.x or 0, cam and cam.y or 0
+    local point = self:set_field_view_anchor(r_idx, c_idx);        if not point then return end
+    local tx, ty = sx, sy
+    if cam and cam.get_desired_position then tx, ty = cam:get_desired_position() end
+    self.field_view_transition = { active = Y, from = from, to = { row = r_idx, col = c_idx }, sx = sx, sy = sy, tx = tx, ty = ty, total = _dist(sx, sy, tx, ty), progress = 0 }
+    self.focus_projection_pending = Y
+    if self.wake_move then self:wake_move() end
+    return point
+end
+
 function GridZone:commit_field_view_projection(args)
     local cfg = self:_focus_projection_cfg();        if not cfg or cfg.enabled == N then return N end
     args = args or {}
@@ -67,7 +93,7 @@ function GridZone:prepare_field_view_move(pawn, r_idx, c_idx)
     if pawn ~= (self.gm and self.gm.field_pawn) then return N end
     if not self.field_view_anchor_cell then local cell = pawn.cell or {}; self:set_field_view_anchor(cell.row or r_idx, cell.col or c_idx) end
     if not self:field_view_dest_offscreen(r_idx, c_idx) then return N end
-    if not self:set_field_view_anchor(r_idx, c_idx) then return N end
+    if not self:begin_field_view_transition(r_idx, c_idx) then return N end
     return self:commit_field_view_projection()
 end
 

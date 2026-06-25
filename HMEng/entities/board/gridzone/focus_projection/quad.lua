@@ -28,11 +28,24 @@ function GridZone:_focus_proxy_quad(r_idx, c_idx, focus)
     return U.translate_quad(proxy_quad, a.x - b.x, a.y - b.y)
 end
 
+local function _transition_proxy_quad(self, r_idx, c_idx, base)
+    local tr = self.field_view_transition
+    if not (tr and tr.from and tr.to) then return end
+    local p = self.update_field_view_transition and self:update_field_view_transition() or tr.progress or 1
+    if p >= 1 then return end
+    local a = self:_focus_proxy_quad(r_idx, c_idx, tr.from) or base
+    local b = self:_focus_proxy_quad(r_idx, c_idx, tr.to) or base
+    return U.lerp_quad(a, b, p)
+end
+
 function GridZone:get_focus_projected_quad(r_idx, c_idx)
     local projector = self.projector;               if not projector then return end
     local base = projector:get_cell_quad(r_idx, c_idx)
     local weight = self:focus_projection_weight()
     if not base or weight <= 0 then return base end
+
+    local transition_proxy = _transition_proxy_quad(self, r_idx, c_idx, base)
+    if transition_proxy then return U.lerp_quad(base, transition_proxy, weight) end
 
     local focus = self:_focus_projection_cell();    if not focus then return base end
     local proxy = self:_focus_proxy_quad(r_idx, c_idx, focus)
@@ -44,6 +57,29 @@ local function _inside_smooth_radius(self, args, cfg)
     local radius = cfg.smooth_radius;                          if not radius then return Y end
     local focus = self:_focus_projection_cell();               if not (focus and args and args.r_idx and args.c_idx) then return Y end
     return max(math.abs(args.r_idx - focus.row), math.abs(args.c_idx - focus.col)) <= radius
+end
+
+local function _add_radius_cells(self, out, seen, center, radius)
+    if not (center and center.row and center.col) then return end
+    for r = max(1, center.row - radius), min(self.n_rows or center.row, center.row + radius) do
+        for c = max(1, center.col - radius), min(self.n_cols or center.col, center.col + radius) do
+            local key = tostring(r) .. ":" .. tostring(c)
+            if not seen[key] then seen[key], out[#out + 1] = Y, { row = r, col = c } end
+        end
+    end
+end
+
+local function _transition_cells(self)
+    local tr = self.field_view_transition;                         if not (tr and tr.from and tr.to) then return {} end
+    local p = self.update_field_view_transition and self:update_field_view_transition() or tr.progress or 1
+    if p >= 1 and not tr.active then return {} end
+    local cfg = self:_focus_projection_cfg() or {}
+    local radius = cfg.transition_radius or cfg.smooth_radius or 3
+    local out, seen = {}, {}
+    _add_radius_cells(self, out, seen, tr.from, radius)
+    _add_radius_cells(self, out, seen, tr.to, radius)
+    self.focus_projection_pending = tr.active == Y
+    return out
 end
 
 function GridZone:_smooth_projected_quad(card, target, args)
@@ -65,10 +101,15 @@ function GridZone:_smooth_projected_quad(card, target, args)
 end
 
 function GridZone:take_focus_projection_pending_cells()
-    local pending = self.focus_projection_pending_cells;       if not pending then self.focus_projection_pending = N; return {} end
+    if self.update_field_view_transition then self:update_field_view_transition() end
+    local transition_cells = _transition_cells(self)
+    local pending = self.focus_projection_pending_cells
+    if not pending then if #transition_cells == 0 then self.focus_projection_pending = N end; return transition_cells end
     local out = {}
     for _, cell in pairs(pending) do out[#out + 1] = cell end
-    self.focus_projection_pending_cells, self.focus_projection_pending = nil, N
+    for _, cell in ipairs(transition_cells) do out[#out + 1] = cell end
+    self.focus_projection_pending_cells = nil
+    self.focus_projection_pending = self.field_view_transition and self.field_view_transition.active == Y
     return out
 end
 
