@@ -54,6 +54,8 @@ end
 
 --- Helper: focus projection cell
 function GridZone:_focus_projection_cell()
+    local anchor = self.field_view_anchor_cell
+    if anchor and anchor.row and anchor.col then return anchor end
     local ctrl = self.gm and self.gm.CTRL
     local fcell = ctrl and (ctrl.navigate_field or ctrl.gamepad_focus_scope == "field") and ctrl.field_focus_cell
     if fcell and fcell.row and fcell.col then return fcell end
@@ -69,7 +71,8 @@ function GridZone:focus_projection_weight()
     local cam = self.gm and self.gm.camera
     local cell = self:_focus_projection_cell();      if not (cam and cam.active and cell) then return 0 end
     local z0, z1 = cfg.zoom_start or 1.05, cfg.zoom_end or 1.6
-    return _clamp01(((cam.zoom or 1) - z0)/max(z1 - z0, 1e-6))*(cfg.max_weight or 1)
+    local zoom = (cfg.track_zoom_settle == Y and cam.zoom) or cam.target_zoom or cam.zoom or 1
+    return _clamp01((zoom - z0)/max(z1 - z0, 1e-6))*(cfg.max_weight or 1)
 end
 
 --- Helper: focus projection state
@@ -109,6 +112,52 @@ function GridZone:queue_focus_projection_after_land(pawn)
     local td = pawn.toddle
     if td and td.active then pawn.focus_projection_after_land = Y; return end
     self:mark_focus_projection_dirty()
+end
+
+------------------------------------------------------
+--- field view anchor
+------------------------------------------------------
+--- Helper: cell focus point
+function GridZone:field_view_cell_point(r_idx, c_idx)
+    local row = self.cells and self.cells[r_idx]
+    local card = row and row[c_idx]
+    if not card then return end
+    local T = card.T
+    return { x = T.x + 0.5*(T.w or 0), y = T.y + 0.5*(T.h or 0) }
+end
+
+--- Helper: set field view anchor
+function GridZone:set_field_view_anchor(r_idx, c_idx)
+    local row = self.cells and self.cells[r_idx]
+    local card = row and row[c_idx];                              if not card then return end
+    self.field_view_anchor_cell = { row = r_idx, col = c_idx }
+    if self.gm.camera then self.gm.camera:set_target(card) end
+    return card
+end
+
+--- Helper: cell screen point
+function GridZone:field_view_cell_screen_point(r_idx, c_idx)
+    local point, cam = self:field_view_cell_point(r_idx, c_idx), self.gm and self.gm.camera
+    if not (point and cam) then return end
+    self._field_view_screen_point = self._field_view_screen_point or {}
+    return cam:world_to_screen_point(point, self._field_view_screen_point)
+end
+
+--- Helper: dest off safe screen
+function GridZone:field_view_dest_offscreen(r_idx, c_idx)
+    local cfg, cam = self:_focus_projection_cfg() or {}, self.gm and self.gm.camera
+    local p = self:field_view_cell_screen_point(r_idx, c_idx);      if not (p and cam) then return N end
+    local vp, mx, my = cam.viewport, (cfg.safe_margin_u or 0.22)*(cam.viewport.w or 0), (cfg.safe_margin_v or cfg.safe_margin_u or 0.22)*(cam.viewport.h or 0)
+    return p.x < vp.x + mx or p.x > vp.x + vp.w - mx or p.y < vp.y + my or p.y > vp.y + vp.h - my
+end
+
+--- Helper: prepare field view move
+function GridZone:prepare_field_view_move(pawn, r_idx, c_idx)
+    local cfg = self:_focus_projection_cfg();        if not cfg or cfg.enabled == N or cfg.camera_anchor == N then return N end
+    if pawn ~= (self.gm and self.gm.field_pawn) then return N end
+    if not self.field_view_anchor_cell then local cell = pawn.cell or {}; self:set_field_view_anchor(cell.row or r_idx, cell.col or c_idx) end
+    if not self:field_view_dest_offscreen(r_idx, c_idx) then return N end
+    return self:set_field_view_anchor(r_idx, c_idx) and Y or N
 end
 
 ------------------------------------------------------

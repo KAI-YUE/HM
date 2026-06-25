@@ -46,10 +46,13 @@ function M.prep_camera(gm, opts)
 
     if gm.bg then gm.camera:set_bounds_from_tiledmap(gm.bg) end
     if freeze_camera then _apply_debug_world_camera(gm, RT); return end
+    if gm.gridzone and pawn.cell then gm.gridzone.field_view_anchor_cell = { row = pawn.cell.row, col = pawn.cell.col } end
     gm.camera:set_target(pawn)
     gm.camera:set_zoom(start_zoom)
     gm.camera:snap_to_target()
     if not opts.silent_start then gm.camera:zoom_to(target_zoom) end
+    local zcfg = gm.gridzone and gm.gridzone._focus_projection_cfg and gm.gridzone:_focus_projection_cfg()
+    if zcfg and zcfg.enabled ~= false and gm.gridzone.mark_focus_projection_dirty then gm.gridzone:mark_focus_projection_dirty(); if gm.gridzone.refresh_focus_projection_state then gm.gridzone:refresh_focus_projection_state() end; gm.gridzone:align_cards({ dt = 0 }) end
 end
 
 return M

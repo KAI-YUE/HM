@@ -1,5 +1,6 @@
 local Actor = require("HMEng.actors.actor")
 
+local abs = math.abs
 local Y, N = true, false 
 
 return function (GridZone)
@@ -12,6 +13,11 @@ function GridZone:mark_pawn_layout_dirty() local gm = self.gm; if gm and gm.mark
 function GridZone:mark_layout_dirty()      local gm = self.gm; if gm and gm.mark_zone_layout_dirty then gm:mark_zone_layout_dirty(self); return end; self:mark_card_layout_dirty(); self:mark_pawn_layout_dirty() end
 
 --- Helper: card layout is live
+local function _field_reveal_is_live(card)
+    local r = card and card.field_reveal;              if not r then return N end
+    return abs(r.x or 0) > 0.001 or abs(r.y or 0) > 0.001 or abs(r.r or 0) > 0.001 or abs((r.scale or 1) - 1) > 0.001
+end
+
 local function _card_layout_is_live(self)
     local cfg = self.config or {}
     if self.focus_projection_pending or (self.focus_projection_state_dirty and self:focus_projection_state_dirty()) then return Y end
@@ -20,6 +26,7 @@ local function _card_layout_is_live(self)
         for c_idx = 1, self.n_cols do
             local card, st = row and row[c_idx]
             st = card and card.states
+            if _field_reveal_is_live(card) then return Y end
             if st and ((st.hover and st.hover.is) or (st.drag and st.drag.is) or (st.focus and st.focus.is)) then return Y end
         end
     end

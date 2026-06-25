@@ -25,8 +25,6 @@ end
 ------------------------------------------------------
 --- Helper: sync_projected quad
 local function _sync_projected_quad(self, card, r_idx, c_idx, args)
-    if card.field_reveal and not (self.focus_projection_active or self.focus_projection_pending) then return end
-
     local projector = self.projector
     if not projector or not card then return end
     card:promote_to_field_card()

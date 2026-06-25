@@ -16,12 +16,16 @@ return function (self)
     }
 
     local focus_projection = {
-        enabled    = Y,     --- blend edge cells toward a center-view quad map while camera is pawn-focused.
-        zoom_start = 1.05,  --- below this zoom, use the whole-field projection.
-        zoom_end   = 1.60,  --- by this zoom, use max_weight of the focus projection.
-        max_weight = 0.82,  --- keep some whole-field shape so the board still reads as one object.
-        smoothing  = 42,     --- 0 snaps quad reassignment after pawn landing.
-        snap       = 0.002, --- settle threshold for smoothed quad corners.
+        enabled    = Y,            --- blend edge cells toward a center-view quad map while camera is pawn-focused.
+        zoom_start = 1.05,         --- below this zoom, use the whole-field projection.
+        zoom_end   = 1.60,         --- by this zoom, use max_weight of the focus projection.
+        max_weight = 0.92,         --- keep some whole-field shape so the board still reads as one object.
+        smoothing  = 0,            --- 0 snaps quad reassignment after pawn landing.
+        track_zoom_settle = N,     --- if true, projection follows camera.zoom during zoom easing.
+        camera_anchor = Y,         --- camera/POV anchor changes only when the destination leaves the safe rect.
+        safe_margin_u = 0.22,      --- inner viewport margin before refocusing.
+        safe_margin_v = 0.22,
+        snap       = 0.002,        --- settle threshold for smoothed quad corners.
     }
 
     self.Fdata = { proj = { default = default_proj } }

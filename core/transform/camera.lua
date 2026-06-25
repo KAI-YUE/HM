@@ -90,11 +90,12 @@ end
 ---__________________________
 function Camera:get_target_center()
     local target = self.target;                 if not target then return end
+    local _to = self.target_offset
+    if target.camera_focus_point then local p = target:camera_focus_point(); if p then return { x = p.x + _to.x, y = p.y + _to.y } end end
     local T = target.VT or target.T;            if not T then return end
     local x, y = T.x + 0.5*T.w, T.y + 0.5*T.h
     x, y = resolve_world_point(x, y, target)
 
-    local _to = self.target_offset
     return { x = x + _to.x, y = y + _to.y }
 end
 
