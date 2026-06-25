@@ -128,11 +128,11 @@ end
 
 --- Helper: set field view anchor
 function GridZone:set_field_view_anchor(r_idx, c_idx)
-    local row = self.cells and self.cells[r_idx]
-    local card = row and row[c_idx];                              if not card then return end
+    local point = self:field_view_cell_point(r_idx, c_idx);        if not point then return end
     self.field_view_anchor_cell = { row = r_idx, col = c_idx }
-    if self.gm.camera then self.gm.camera:set_target(card) end
-    return card
+    local cam = self.gm and self.gm.camera
+    if cam and cam.set_focus_point then cam:set_focus_point(point.x, point.y) end
+    return point
 end
 
 --- Helper: cell screen point

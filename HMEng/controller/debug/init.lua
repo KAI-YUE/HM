@@ -9,9 +9,12 @@ local ModeSwitch      = require("HMEng.controller.debug.mode_switch")
 
 local random_pick = TabUtils.random_pick
 local play_clip   = SoundUtils.play_clip
+local max, min    = math.max, math.min
 
 local Y, N = true, false
 local PAWN_ARROW_KEYS = { left = Y, up = Y, down = Y, right = Y }
+local FIELD_CELL_NUDGE = { i = { r = -1, c = 0 }, k = { r = 1, c = 0 }, j = { r = 0, c = -1 }, l = { r = 0, c = 1 } }
+local FIELD_FOCUS_NUDGE = { i = { x = 0, y = -1 }, k = { x = 0, y = 1 }, j = { x = -1, y = 0 }, l = { x = 1, y = 0 } }
 
 return function (Controller)
 ------------------------------------------------------
@@ -98,12 +101,86 @@ function Controller:_debug_hud_action(key)
     elseif key == "7" then self:emit_intent("debug_hud_toggle_foe"); return Y end
 end
 
+------------------------------------------------------
+--- Debug field projection helpers
+------------------------------------------------------
+--- Helper: debug toggle field focus projection
+function Controller:_debug_toggle_field_focus_projection(key)
+    if key ~= "q" then return end
+    local gm = self.gm or G
+    local zone = gm and gm.gridzone;                         if not (zone and zone.projector and zone.align_cards) then return end
+    local cfg = zone._focus_projection_cfg and zone:_focus_projection_cfg(); if not cfg then return end
+
+    if zone.focus_projection_active then
+        zone.focus_projection_active, zone.focus_projection_pending = N, N
+        zone.focus_projection_key, zone.focus_projection_weight_last = nil, nil
+    else
+        local pawn, cell = gm.field_pawn, nil
+        cell = pawn and pawn.zone == zone and pawn.cell or zone.field_view_anchor_cell
+        if cell and cell.row and cell.col then zone.field_view_anchor_cell = { row = cell.row, col = cell.col } end
+        zone.focus_projection_active, zone.focus_projection_pending = Y, Y
+        if zone.refresh_focus_projection_state then zone:refresh_focus_projection_state() end
+    end
+
+    zone:align_cards({ dt = 0 })
+    zone.card_layout_dirty = N
+    return Y
+end
+
+--- Helper: debug field focus point
+local function _debug_field_focus_point(gm, zone, cam)
+    if zone.debug_focus_point then return zone.debug_focus_point end
+    local fp = cam and cam.focus_point
+    if fp then zone.debug_focus_point = { x = fp.x, y = fp.y }; return zone.debug_focus_point end
+    local cell = zone.field_view_anchor_cell or (gm.field_pawn and gm.field_pawn.cell)
+    local p = cell and zone.field_view_cell_point and zone:field_view_cell_point(cell.row, cell.col)
+    if p then zone.debug_focus_point = { x = p.x, y = p.y }; return zone.debug_focus_point end
+end
+
+--- Helper: debug nudge field anchor cell
+function Controller:_debug_nudge_field_anchor_cell(key)
+    local dir = FIELD_CELL_NUDGE[key];                       if not dir then return end
+    if self.held_keys and (self.held_keys.lshift or self.held_keys.rshift) then return end
+    local gm = self.gm or G;                                  if not (gm and gm.debug and gm.debug.on) then return end
+    local zone = gm.gridzone;                                 if not (zone and zone.set_field_view_anchor) then return end
+    local cell = zone.field_view_anchor_cell or (gm.field_pawn and gm.field_pawn.cell); if not (cell and cell.row and cell.col) then return end
+
+    local row = min(max(1, cell.row + dir.r), zone.n_rows or cell.row)
+    local col = min(max(1, cell.col + dir.c), zone.n_cols or cell.col)
+    local p = zone:set_field_view_anchor(row, col);           if not p then return end
+    zone.debug_focus_point = { x = p.x, y = p.y }
+    if zone.focus_projection_active then if zone.refresh_focus_projection_state then zone:refresh_focus_projection_state() end; zone:align_cards({ dt = 0 }) end
+    return Y
+end
+
+--- Helper: debug nudge field focus point
+function Controller:_debug_nudge_field_focus_point(key)
+    local dir = FIELD_FOCUS_NUDGE[key]
+    if not dir and key ~= "u" and key ~= "o" then return end
+    local gm = self.gm or G;                                  if not (gm and gm.debug and gm.debug.on) then return end
+    local zone, cam = gm.gridzone, gm.camera;                  if not (zone and cam and cam.set_focus_point) then return end
+    local cfg = zone._focus_projection_cfg and zone:_focus_projection_cfg() or {}
+    local step = zone.debug_focus_step or cfg.debug_focus_step or 1
+
+    if key == "u" or key == "o" then zone.debug_focus_step = (key == "u") and max(0.05, 0.5*step) or 2*step; return Y end
+    if not (self.held_keys and (self.held_keys.lshift or self.held_keys.rshift)) then return end
+
+    local p = _debug_field_focus_point(gm, zone, cam);         if not p then return end
+    p.x, p.y = p.x + dir.x*step, p.y + dir.y*step
+    zone.debug_focus_point = p
+    cam:set_focus_point(p.x, p.y)
+    return Y
+end
+
 --_________________________________________________
 --- Main: _debug panel
 --_________________________________________________
 function Controller:_debug_panel(key)
     if ModeSwitch.handle(self, key) then return end
     if self.debug_gamepad_mode then return end
+    if self:_debug_nudge_field_anchor_cell(key) then return end
+    if self:_debug_nudge_field_focus_point(key) then return end
+    if self:_debug_toggle_field_focus_projection(key) then return end
     if PAWN_ARROW_KEYS[key] then
         local ht, Pawn = self.hovering.target, require("HMEng.entities.pawn")
         if ht and ht:is(Pawn) then self:_pawn_action(key); return end

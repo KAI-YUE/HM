@@ -47,6 +47,7 @@ function GMgr:draw()
     self:_draw_resolution_preview_screen_overlay()
     LG.pop();                                     LG.setCanvas()
     self:debug_simulated_controller()
+    self:debug_field_projection_mode()
     self:debug_fps()
 end
 

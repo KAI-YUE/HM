@@ -5,6 +5,9 @@ local Y  = true
 --- helpers
 ----------------------------
 local function _ctrl(self) return self.CTRL or (G and G.CTRL) end
+local function _text_w(text) local font = LG.getFont(); return font and font:getWidth(text) or 0 end
+local function _text_block_w(text) local w = 0; for line in tostring(text):gmatch("[^\n]+") do w = math.max(w, _text_w(line)) end; return w end
+local function _line_count(text) local n = 1; for _ in tostring(text):gmatch("\n") do n = n + 1 end; return n end
 local function _field_focus_cell(ctrl)
     local cell = ctrl and ctrl.field_focus_cell
     if cell and cell.row and cell.col then return cell end
@@ -25,6 +28,33 @@ function GMgr:debug_simulated_controller()
     local cell = _field_focus_cell(ctrl)
     if cell and cell.row and cell.col then msg = msg .. "\nfield snap: (" .. tostring(cell.row) .. ", " .. tostring(cell.col) .. ")" end
     LG.push(); LG.setColor(1, 0.82, 0.22, 1); LG.print(msg, 10, 10, 0, 1.55, 1.55); LG.pop()
+    return Y
+end
+
+-----------------------------
+--- field projection mode
+----------------------------
+--- Helper: debug field projection mode
+function GMgr:debug_field_projection_mode()
+    if _RELEASE_MODE or not (self.debug and self.debug.on) then return end
+    local zone = self.gridzone;                    if not (zone and zone.projector) then return end
+    local cfg = zone._focus_projection_cfg and zone:_focus_projection_cfg(); if not (cfg and cfg.enabled ~= false) then return end
+
+    local cam, cell = self.camera, zone.field_view_anchor_cell
+    local fp = zone.debug_focus_point or (cam and cam.focus_point)
+    local step = zone.debug_focus_step or cfg.debug_focus_step or 1
+    local msg = zone.focus_projection_active and "Focus" or "Global"
+    if fp then msg = msg .. ("\nfocus: %.2f, %.2f"):format(fp.x or 0, fp.y or 0) end
+    if cell and cell.row and cell.col then msg = msg .. ("\ncell: %s, %s"):format(tostring(cell.row), tostring(cell.col)) end
+    msg = msg .. ("\nstep: %.2f"):format(step)
+
+    local scale, pad = 1.25, 12
+    local w, h = _text_block_w(msg)*scale, _line_count(msg)*18
+    local x, y = LG.getWidth() - w - pad, pad
+    LG.push()
+    LG.setColor(0, 0, 0, 0.46); LG.rectangle("fill", x - 7, y - 5, w + 14, h + 8)
+    LG.setColor(1, 0.82, 0.22, 1); LG.print(msg, x, y, 0, scale, scale)
+    LG.pop()
     return Y
 end
 

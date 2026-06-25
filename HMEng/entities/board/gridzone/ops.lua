@@ -18,6 +18,29 @@ local function _field_reveal_is_live(card)
     return abs(r.x or 0) > 0.001 or abs(r.y or 0) > 0.001 or abs(r.r or 0) > 0.001 or abs((r.scale or 1) - 1) > 0.001
 end
 
+local function _field_reveal_any_live(self)
+    for r_idx = 1, self.n_rows do
+        local row = self.cells and self.cells[r_idx]
+        for c_idx = 1, self.n_cols do if _field_reveal_is_live(row and row[c_idx]) then return Y end end
+    end
+    return N
+end
+
+local function _collect_reveal_layout_cells(self)
+    local out, live = {}, N
+    for r_idx = 1, self.n_rows do
+        local row = self.cells and self.cells[r_idx]
+        for c_idx = 1, self.n_cols do
+            local card = row and row[c_idx]
+            local is_live = _field_reveal_is_live(card)
+            if is_live or (card and card._field_reveal_layout_live) then out[#out + 1] = { row = r_idx, col = c_idx } end
+            if card then card._field_reveal_layout_live = is_live end
+            if is_live then live = Y end
+        end
+    end
+    return out, live
+end
+
 local function _card_layout_is_live(self)
     local cfg = self.config or {}
     if self.focus_projection_pending or (self.focus_projection_state_dirty and self:focus_projection_state_dirty()) then return Y end
@@ -26,7 +49,6 @@ local function _card_layout_is_live(self)
         for c_idx = 1, self.n_cols do
             local card, st = row and row[c_idx]
             st = card and card.states
-            if _field_reveal_is_live(card) then return Y end
             if st and ((st.hover and st.hover.is) or (st.drag and st.drag.is) or (st.focus and st.focus.is)) then return Y end
         end
     end
@@ -34,14 +56,18 @@ local function _card_layout_is_live(self)
 end
 
 --- Helper: static move pending
-function GridZone:static_move_pending() return Actor.static_move_pending(self) or _card_layout_is_live(self) end
+function GridZone:static_move_pending() return Actor.static_move_pending(self) or _card_layout_is_live(self) or self.reveal_layout_live or _field_reveal_any_live(self) end
 
 --- Helper: flush layout
 function GridZone:flush_layout(dt)
     if self.refresh_focus_projection_state and self:refresh_focus_projection_state() then self.card_layout_dirty = Y end
     local live, was_live = _card_layout_is_live(self), self.card_layout_live
+    local reveal_cells, reveal_live = _collect_reveal_layout_cells(self)
+    local full_align = self.card_layout_dirty or live or was_live
     self.card_layout_live = live
-    if self.card_layout_dirty or live or was_live then self:align_cards({ dt = dt }); self.card_layout_dirty = N end
+    self.reveal_layout_live = reveal_live
+    if full_align then self:align_cards({ dt = dt }); self.card_layout_dirty = N end
+    if not full_align then for _, cell in ipairs(reveal_cells) do self:align_card_at(cell.row, cell.col, { dt = dt }) end end
     if self.pawn_layout_dirty then self:align_pawns(); self.pawn_layout_dirty = N end
 end
 
@@ -53,7 +79,7 @@ function GridZone:move(dt)
     local was_new_align = self.new_align
     local moved = Actor.move(self, dt)
     local focus_dirty = self.focus_projection_pending or (self.focus_projection_state_dirty and self:focus_projection_state_dirty())
-    if not moved and not (self.card_layout_dirty or self.pawn_layout_dirty or self.card_layout_live or self.pawn_layout_live or focus_dirty) then return end
+    if not moved and not (self.card_layout_dirty or self.pawn_layout_dirty or self.card_layout_live or self.reveal_layout_live or self.pawn_layout_live or focus_dirty) then return end
     if was_new_align then self:mark_layout_dirty() end
     self:flush_layout(dt)
 end

@@ -20,6 +20,7 @@ function Camera:init(args)
 
     self.target_offset,  self.viewport  = _orig(), { x = args.x or 0, y = args.y or 0, w = args.w or 0, h = args.h or 0 }
     self.bounds,         self.target    = nil,     nil
+    self.focus_point                 = nil
     self.zoom_velocity,  self.active    = 0,       Y
     self.velocity,   self.x,   self.y   = _orig(), self.viewport.x, self.viewport.y
     self.target_zoom,    self.zoom      = args.zoom, args.zoom
@@ -36,6 +37,8 @@ end
 function Camera:set_viewport(x, y, w, h) local vp = self.viewport; vp.x, vp.y, vp.w, vp.h = x or vp.x, y or vp.y, w or vp.w, h or vp.h; return self end
 function Camera:set_target(target, offset_x, offset_y) self.target = target; self.target_offset.x, self.target_offset.y = offset_x or 0, offset_y or 0; return self end
 function Camera:set_target_offset(offset_x, offset_y) self.target_offset.x, self.target_offset.y = offset_x or 0, offset_y or 0; return self end
+function Camera:set_focus_point(x, y) self.focus_point = self.focus_point or _orig(); self.focus_point.x, self.focus_point.y = x or 0, y or 0; return self end
+function Camera:clear_focus_point() self.focus_point = nil; return self end
 
 ---------------------------------------------
 --- zoom controls
@@ -89,8 +92,9 @@ end
 --- main: get target center
 ---__________________________
 function Camera:get_target_center()
-    local target = self.target;                 if not target then return end
     local _to = self.target_offset
+    local fp = self.focus_point;                if fp then return { x = fp.x + _to.x, y = fp.y + _to.y } end
+    local target = self.target;                 if not target then return end
     if target.camera_focus_point then local p = target:camera_focus_point(); if p then return { x = p.x + _to.x, y = p.y + _to.y } end end
     local T = target.VT or target.T;            if not T then return end
     local x, y = T.x + 0.5*T.w, T.y + 0.5*T.h

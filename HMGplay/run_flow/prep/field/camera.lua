@@ -46,12 +46,14 @@ function M.prep_camera(gm, opts)
 
     if gm.bg then gm.camera:set_bounds_from_tiledmap(gm.bg) end
     if freeze_camera then _apply_debug_world_camera(gm, RT); return end
-    if gm.gridzone and pawn.cell then gm.gridzone.field_view_anchor_cell = { row = pawn.cell.row, col = pawn.cell.col } end
+    local zcfg = gm.gridzone and gm.gridzone._focus_projection_cfg and gm.gridzone:_focus_projection_cfg()
+    local anchor_camera = zcfg and zcfg.enabled ~= false and zcfg.camera_anchor ~= false
     gm.camera:set_target(pawn)
+    if anchor_camera then local cell = { row = zcfg.debug_anchor_row or (pawn.cell and pawn.cell.row), col = zcfg.debug_anchor_col or (pawn.cell and pawn.cell.col) }; if gm.gridzone and cell.row and cell.col then gm.gridzone:set_field_view_anchor(cell.row, cell.col) end
+    elseif gm.camera.clear_focus_point then gm.camera:clear_focus_point() end
     gm.camera:set_zoom(start_zoom)
     gm.camera:snap_to_target()
     if not opts.silent_start then gm.camera:zoom_to(target_zoom) end
-    local zcfg = gm.gridzone and gm.gridzone._focus_projection_cfg and gm.gridzone:_focus_projection_cfg()
     if zcfg and zcfg.enabled ~= false and gm.gridzone.mark_focus_projection_dirty then gm.gridzone:mark_focus_projection_dirty(); if gm.gridzone.refresh_focus_projection_state then gm.gridzone:refresh_focus_projection_state() end; gm.gridzone:align_cards({ dt = 0 }) end
 end
 
