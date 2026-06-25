@@ -1,0 +1,17 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "_1_white_birch.moc3",
+		"Textures": [
+			"_1_white_birch.512/texture_00.png"
+		],
+		"DisplayInfo": "_1_white_birch.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": []
+		}
+	]
+}

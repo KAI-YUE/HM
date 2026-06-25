@@ -1,0 +1,62 @@
+{
+	"Version": 3,
+	"Parameters": [
+		{
+			"Id": "Param",
+			"GroupId": "",
+			"Name": "grass"
+		},
+		{
+			"Id": "Param2",
+			"GroupId": "",
+			"Name": "Tree_whole"
+		},
+		{
+			"Id": "Param3",
+			"GroupId": "",
+			"Name": "leaf1"
+		},
+		{
+			"Id": "Param4",
+			"GroupId": "",
+			"Name": "leaf2"
+		},
+		{
+			"Id": "Param5",
+			"GroupId": "",
+			"Name": "leaf3"
+		},
+		{
+			"Id": "Param7",
+			"GroupId": "",
+			"Name": "leaf4"
+		},
+		{
+			"Id": "Param8",
+			"GroupId": "",
+			"Name": "leaf5"
+		},
+		{
+			"Id": "Param9",
+			"GroupId": "",
+			"Name": "leaf6"
+		},
+		{
+			"Id": "Param6",
+			"GroupId": "",
+			"Name": "crown"
+		},
+		{
+			"Id": "Param10",
+			"GroupId": "",
+			"Name": "trunk"
+		}
+	],
+	"ParameterGroups": [],
+	"Parts": [
+		{
+			"Id": "crown_leaves",
+			"Name": "crown_leaves"
+		}
+	]
+}

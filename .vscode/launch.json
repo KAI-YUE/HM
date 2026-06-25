@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Love2D",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "/home/kyue/yue/software/love2d/love-11.5-x86_64.AppImage .",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

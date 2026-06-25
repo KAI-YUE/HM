@@ -1,0 +1,38 @@
+return {
+    -- text source
+    "text",
+    "ref_table",
+    "ref_value",
+    "lang",
+
+    -- text layout
+    "text_scale",
+    "text_color",
+    "idle_text_color",
+    "selected_text_color",
+    "text_shadow",
+    "text_alpha",
+    "text_overlay",
+    "text_align",
+    "text_offset",
+    "text_padding",
+    "text_squish",
+    "text_box_T",
+    "text_maxw",
+    "text_wrap",
+    "text_page",
+    "text_max_lines",
+    "text_line_spacing",
+    "text_mask_shader",
+    "text_mask_ref",
+    "text_mask_dir_ref",
+    "text_mask_dir",
+    "text_mask_box",
+    "text_mask_T",
+    "text_mask_scale",
+    "text_static",
+
+    -- text behavior
+    "text_reveal",
+    "text_reveal_rate",
+}

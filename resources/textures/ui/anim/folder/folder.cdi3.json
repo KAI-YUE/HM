@@ -1,0 +1,21 @@
+{
+	"Version": 3,
+	"Parameters": [
+		{
+			"Id": "Param",
+			"GroupId": "",
+			"Name": "close_open"
+		}
+	],
+	"ParameterGroups": [],
+	"Parts": [
+		{
+			"Id": "upper_parts",
+			"Name": "upper_parts"
+		},
+		{
+			"Id": "lower_parts",
+			"Name": "lower_parts"
+		}
+	]
+}
