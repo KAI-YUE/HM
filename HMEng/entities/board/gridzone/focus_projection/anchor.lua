@@ -33,7 +33,8 @@ function GridZone:set_field_view_anchor(r_idx, c_idx)
     local point = self:field_view_cell_point(r_idx, c_idx);        if not point then return end
     self.field_view_anchor_cell = { row = r_idx, col = c_idx }
     local cam = self.gm and self.gm.camera
-    if cam and cam.set_focus_point then cam:set_focus_point(point.x, point.y) end
+    local cfg = self:_focus_projection_cfg()
+    if cam and cam.set_focus_point and cfg and cfg.enabled ~= N then cam:set_focus_point(point.x, point.y) end
     return point
 end
 

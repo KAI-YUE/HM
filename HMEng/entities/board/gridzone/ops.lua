@@ -55,13 +55,26 @@ local function _card_layout_is_live(self)
     return cfg.live_layout == Y
 end
 
+--- Helper: focus projection enabled
+local function _focus_projection_enabled(self)
+    local cfg = self._focus_projection_cfg and self:_focus_projection_cfg()
+    return cfg and cfg.enabled ~= N
+end
+
+--- Helper: clear focus projection pending
+local function _clear_focus_projection_pending(self)
+    self.focus_projection_pending, self.focus_projection_pending_cells, self.field_view_transition = N, nil, nil
+    local cam = self.gm and self.gm.camera; if cam and cam.clear_focus_point then cam:clear_focus_point() end
+end
+
 local function _collect_focus_projection_cells(self)
+    if not _focus_projection_enabled(self) then _clear_focus_projection_pending(self); return {} end
     if not self.take_focus_projection_pending_cells then return {} end
     return self:take_focus_projection_pending_cells()
 end
 
 --- Helper: static move pending
-function GridZone:static_move_pending() return Actor.static_move_pending(self) or self.focus_projection_pending or _card_layout_is_live(self) or self.reveal_layout_live or _field_reveal_any_live(self) end
+function GridZone:static_move_pending() return Actor.static_move_pending(self) or (_focus_projection_enabled(self) and self.focus_projection_pending) or _card_layout_is_live(self) or self.reveal_layout_live or _field_reveal_any_live(self) end
 
 --- Helper: flush layout
 function GridZone:flush_layout(dt)
@@ -85,7 +98,9 @@ function GridZone:update(dt) end
 function GridZone:move(dt)
     local was_new_align = self.new_align
     local moved = Actor.move(self, dt)
-    local focus_dirty = self.focus_projection_pending or (self.focus_projection_state_dirty and self:focus_projection_state_dirty())
+    local focus_enabled = _focus_projection_enabled(self)
+    if not focus_enabled then _clear_focus_projection_pending(self) end
+    local focus_dirty = focus_enabled and (self.focus_projection_pending or (self.focus_projection_state_dirty and self:focus_projection_state_dirty()))
     if not moved and not (self.card_layout_dirty or self.pawn_layout_dirty or self.card_layout_live or self.reveal_layout_live or self.pawn_layout_live or focus_dirty) then return end
     if was_new_align then self:mark_layout_dirty() end
     self:flush_layout(dt)

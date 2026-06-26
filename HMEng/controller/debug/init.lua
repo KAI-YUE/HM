@@ -145,6 +145,7 @@ function Controller:_debug_nudge_field_anchor_cell(key)
     if self.held_keys and (self.held_keys.lshift or self.held_keys.rshift) then return end
     local gm = self.gm or G;                                  if not (gm and gm.debug and gm.debug.on) then return end
     local zone = gm.gridzone;                                 if not (zone and zone.set_field_view_anchor) then return end
+    local cfg = zone._focus_projection_cfg and zone:_focus_projection_cfg(); if not cfg or cfg.enabled == N then return end
     local cell = zone.field_view_anchor_cell or (gm.field_pawn and gm.field_pawn.cell); if not (cell and cell.row and cell.col) then return end
 
     local row = min(max(1, cell.row + dir.r), zone.n_rows or cell.row)
@@ -162,6 +163,7 @@ function Controller:_debug_nudge_field_focus_point(key)
     local gm = self.gm or G;                                  if not (gm and gm.debug and gm.debug.on) then return end
     local zone, cam = gm.gridzone, gm.camera;                  if not (zone and cam and cam.set_focus_point) then return end
     local cfg = zone._focus_projection_cfg and zone:_focus_projection_cfg() or {}
+    if cfg.enabled == N then return end
     local step = zone.debug_focus_step or cfg.debug_focus_step or 1
 
     if key == "u" or key == "o" then zone.debug_focus_step = (key == "u") and max(0.05, 0.5*step) or 2*step; return Y end

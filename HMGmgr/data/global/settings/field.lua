@@ -9,18 +9,18 @@ return function (self)
     local default_proj = {
         bottom_offset    = 0.9,            --- baseline lift from the bottom edge.
         anchor_w         = _cw,            --- projected field width at the anchor row.
-        anchor_top_q     = 0.93,           --- bottom anchor's depth along the vertical projection.
+        anchor_top_q     = 0.98,           --- bottom anchor's depth along the vertical projection.
         h_compress       = 1.0,            --- vertical projection compression.
         vanish_center_u  = 0.5,            --- horizontal vanishing center, 0 left to 1 right.
-        aspect_compress  = 0.9,           --- card width compression after projection.
+        aspect_compress  = 0.9,            --- card width compression after projection.
     }
 
     local focus_projection = {
-        enabled            = Y,            --- blend edge cells toward a center-view quad map while camera is pawn-focused.
+        enabled            = N,            --- blend edge cells toward a center-view quad map while camera is pawn-focused.
         zoom_start         = 1.05,         --- below this zoom, use the whole-field projection.
         zoom_end           = 1.60,         --- by this zoom, use max_weight of the focus projection.
         max_weight         = 0.42,         --- keep some whole-field shape so the board still reads as one object.
-        smoothing          = 10,            --- extra per-cell quad lag; keep 0 when camera-coupled transition is enough.
+        smoothing          = 0,            --- extra per-cell quad lag; keep 0 when camera-coupled transition is enough.
         smooth_radius      = 3,            --- only cells near the focus anchor morph; far cells snap for FPS.
         transition_radius  = 5,            --- cells around old/new anchors updated while camera moves.
         transition_snap    = 0.985,        --- progress at which camera-coupled quad transition is considered settled.
