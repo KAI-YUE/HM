@@ -55,8 +55,7 @@ end
 --- Helper: focused field cell
 local function _focused_field_cell(self)
     local ctrl = self.gm and self.gm.CTRL
-    local cell = ctrl and ctrl.field_focus_cell
-    if cell and cell.row and cell.col then return cell end
+    local cell = ctrl and ctrl.field_focus_cell;              if cell and cell.row and cell.col then return cell end
     local fct = ctrl and ctrl.focused and ctrl.focused.target
     if fct and fct.zone == self and fct.cell then return fct.cell end
 end

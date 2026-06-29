@@ -15,6 +15,7 @@ return function (self)
         aspect_compress  = 0.9,            --- card width compression after projection.
     }
 
+    --- experimental feature 
     local focus_projection = {
         enabled            = N,            --- blend edge cells toward a center-view quad map while camera is pawn-focused.
         zoom_start         = 1.05,         --- below this zoom, use the whole-field projection.
