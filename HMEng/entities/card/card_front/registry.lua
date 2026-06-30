@@ -65,6 +65,12 @@ function CardFront:_init_face_quads(TA)
     self.fine_quads  = { [32] = s32:get_quad(face_s_keys[32]), [64]  = s64:get_quad(face_s_keys[64]), [128] = s128:get_quad(face_s_keys[128]) }
 end
 
+--- Helper: init face frame
+local function _init_face_frame(self, TA, card)
+    local atlas, key = TA.cards, card.frame_key or "card_frame_1";         if not (atlas and atlas.quads and atlas.quads[key]) then return end
+    self.frame_img, self.frame_quad = atlas.image, atlas.quads[key]
+end
+
 ---______________________________
 --- init custom face 
 ---______________________________
@@ -100,6 +106,7 @@ function CardFront:init_front_attributes(gm, x, y, w, h, card, params)
     self.suit_shader, self.rank_color   = s_shader, _get_rank_color(TA.ranks, self.suit)
 
     self:_init_face_quads(TA)
+    _init_face_frame(self, TA, card)
     self:_init_custom_face(gm, card)
 
     self.pips = LSPpips[_r]

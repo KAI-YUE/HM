@@ -79,7 +79,7 @@ function GMgr:shared_atlas_settings()
     self.T_atlas = {
         -- general card related
         ranks    = Atlas(root_tex.."card/ranks/",        "ranks", "linear", "linear", atlas_smooth),
-        cards    = Atlas(root_tex.."card/cards/500_aa/", "cards", "linear", "linear", atlas_smooth),
+        cards    = Atlas(root_tex.."card/cards/",        "cards", "linear", "linear", atlas_smooth),
 
         suits32  = Atlas(root_tex.."card/suits/32/",     "suits", "linear", "linear", atlas_smooth),
         suits64  = Atlas(root_tex.."card/suits/64/",     "suits", "linear", "linear", atlas_smooth),
@@ -96,8 +96,8 @@ function GMgr:shared_atlas_settings()
         grass_dec = Atlas(root_tex.."map/grass/",        "grass_dec", "linear", "linear", atlas_smooth),
 
         -- ui experiments
-        icons     = Atlas(root_tex.."ui/", "icon_pack", "linear", "linear", atlas_smooth),
-        ui_pack   = Atlas(root_tex.."ui/", "ui_pack",   "linear", "linear", atlas_smooth),
+        icons     = Atlas(root_tex.."ui/", "icon_pack",  "linear", "linear", atlas_smooth),
+        ui_pack   = Atlas(root_tex.."ui/", "ui_pack",    "linear", "linear", atlas_smooth),
 
         -- pawns 
         pawns    = Atlas(root_tex.."pawns/", "pawns")

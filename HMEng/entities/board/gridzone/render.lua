@@ -1,12 +1,13 @@
 local Render, C = require("HMfns.systems.render"), require("HMfns.animate.color.color_const")
-
 local LG = love.graphics
+
 local enqueue_drawable = Render.enqueue_drawable
+
 local Y, N = true, false
 
 return function (GridZone)
 -----------------------------------
---- draw 
+--- draw field
 -----------------------------------
 --- Helper: valid field
 local function _valid_field(card)
@@ -23,24 +24,24 @@ local function _valid_pawn(pawn)
 end
 
 --- Helper: status check 
-function GridZone:_status_check(gm, type, state)
-    local stage = gm.g_stage;  local Tstates = { STS.battle }
-end
+function GridZone:_status_check(gm, type, state) local stage = gm.g_stage;  local Tstates = { STS.battle }; end
 
---- Helper: draw field
+--- Helper: draw field cell
 function GridZone:draw_field_cell(r_idx, c_idx)
-    local row = self.cells and self.cells[r_idx]
-    local card = row and row[c_idx]
-    if card and _valid_field(card) then
-        local preview = self.boardzone and self.boardzone.move_preview
-        local key = tostring(r_idx) .. ":" .. tostring(c_idx)
-        local old_alpha = card.draw_alpha
-        if preview and preview.active and not preview.reachable[key] then card.draw_alpha = (old_alpha or 1)*(preview.dim_alpha or 0.24) end
-        card:draw()
-        card.draw_alpha = old_alpha
-    end
+    local row   = self.cells and self.cells[r_idx]
+    local card  = row and row[c_idx];               if not card or not _valid_field(card) then return end 
+    
+    local preview    = self.boardzone and self.boardzone.move_preview
+    local key        = tostring(r_idx) .. ":" .. tostring(c_idx)
+    local old_alpha  = card.draw_alpha
+    if preview and preview.active and not preview.reachable[key] then card.draw_alpha = (old_alpha or 1)*(preview.dim_alpha or 0.24) end
+    card:draw()
+    card.draw_alpha = old_alpha
 end
 
+---______________________________________
+--- main: draw_field
+---______________________________________
 function GridZone:draw_field()
     local cells = self.cells
     for r = 1, self.n_rows do 
