@@ -1,4 +1,4 @@
-local C, CL = require("HMfns.animate.color.color_const"), require("HMEng.entities.card.card_front.build_face.basic_layout")
+local C, CL = require("HMfns.animate.color.color_const"), require("HMEng.entities.card.card_front.cfg_data.basic_layout")
 
 local CLC    = CL.corner
 local CR, CS = CLC.top_rank, CLC.top_suit
@@ -8,7 +8,7 @@ local PI     = math.pi
 
 return function (CardFront)
 --------------------------------------------------
---- Renderers: corner identity
+--- render rank
 --------------------------------------------------
 function CardFront:_render_rank(cw, ch)
     local q = self.Qrank
@@ -16,6 +16,7 @@ function CardFront:_render_rank(cw, ch)
 
     local target, r = CR.s*cw, 0.4*(rand() - 0.5)
     local rx, ry, s = CR.x, CR.y, target/vw
+
     LG.setColor(self.rank_color or C.WHITE)
     LG.draw(self.r_img, q, rx*cw, ry*ch, r, s, s, 0.5*vw, 0.5*vh)
 
@@ -24,6 +25,9 @@ function CardFront:_render_rank(cw, ch)
     LG.setColor(1, 1, 1, 1)
 end
 
+-------------------------------------------------
+--- render_cor_suit
+-------------------------------------------------
 function CardFront:_render_cor_suit(cw, ch)
     local q = self.Qsuit
     local _, _, vw, vh = q:getViewport()

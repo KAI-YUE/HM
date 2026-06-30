@@ -4,16 +4,19 @@ local min, max = math.min, math.max
 local Y = true
 
 return function (CardFront)
---------------------------------------------------
---- Helpers: debug field coordinates
---------------------------------------------------
+--------------------------------------------------------------
+--- refresh_debug_field_coords
+--------------------------------------------------------------
+--- Helper: _debug_field_coord_text
 local function _debug_field_coord_text(self)
-    local card = self.role and self.role.draw_major
-    local gm, cell = card and card.gm, card and card.cell
-    local zone = card and card.zone
-    local debug_gamepad = gm and gm.CTRL and gm.CTRL.debug_gamepad_mode
+    local card      = self.role and self.role.draw_major;    if not card then return end 
+    local gm, cell  = card.gm, card.cell
+    local zone      = card.zone
+
+    local debug_gamepad = gm.CTRL.debug_gamepad_mode
     if not (gm and ((gm.debug and gm.debug.on) or debug_gamepad) and cell and cell.row and cell.col) then return end
     if not (zone and zone.config and zone.config.type == "field") then return end
+   
     local p = zone.field_view_cell_debug_points and zone:field_view_cell_debug_points(cell.row, cell.col)
     local T = card.T or {}
     local cx, cy = (T.x or 0) + 0.5*(T.w or 0), (T.y or 0) + 0.5*(T.h or 0)
@@ -21,15 +24,20 @@ local function _debug_field_coord_text(self)
     return ("(%s, %s)\nT %.2f, %.2f\nQ %.2f, %.2f\nF %.2f, %.2f"):format(tostring(cell.row), tostring(cell.col), T.x or 0, T.y or 0, p.quad.x or 0, p.quad.y or 0, p.world.x or 0, p.world.y or 0)
 end
 
+---___________________________________________________________
+--- main: refresh_debug_field_coords
+---___________________________________________________________
 function CardFront:refresh_debug_field_coords()
     local text = _debug_field_coord_text(self)
     if self.debug_field_coord_text == text then return end
     self.debug_field_coord_text, self.face_dirty = text, Y
 end
 
+--------------------------------------------------------------
+--- draw_debug_field_coords
+--------------------------------------------------------------
 function CardFront:draw_debug_field_coords(cw, ch)
-    local text = self.debug_field_coord_text
-    if not text then return end
+    local text = self.debug_field_coord_text;       if not text then return end
 
     local font = LG.getFont()
     local text_w, lines = 0, 1

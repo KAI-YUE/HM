@@ -143,9 +143,11 @@ function GMgr:_save2profile()
     tsort(self.P_CPools["Deck"], function (a, b) return (a.order - (a.unlocked and 100 or 0)) < (b.order - (b.unlocked and 100 or 0)) end)
 end
 
+---______________________________________
+--- main: init_item_prototypes
+---______________________________________
 function GMgr:init_item_prototypes()
     self:shared_atlas_settings()
-    self.P_SEALS = { Gold = _seal(1), Red = _seal(2), Blue = _seal(3), Purple = _seal(4) }
     self.tag_undiscovered = {name = "Not Discovered", order = 1, config = {type = ""}, pos = { x=3,y=4 } }
 
     self.b_undiscovered = {name = "Undiscovered", debuff_text = "Defeat this blind to discover", pos = {x=0,y=30}}

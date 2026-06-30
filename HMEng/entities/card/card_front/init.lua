@@ -1,5 +1,4 @@
 local Actor  = require("HMEng.actors.actor")
-local layout = require("HMEng.entities.card.card_front.build_face.basic_layout")
 
 local CardFront = Actor:extend()
 

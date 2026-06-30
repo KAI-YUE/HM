@@ -9,6 +9,18 @@ local C = {
     SPGRAY     = _hex("#FAF2E2FF"),         STEEL      = _hex("#888889FF"),
     WHITE      = { 1, 1, 1, 1 },       
     
+    CARD = {
+        BASE = _hex("#F1E8DFFF"),
+
+        SUIT = {
+            F  = _hex("#CC2C37FE"),        W  = _hex("#52B4B4FF"),
+            M  = _hex("#575757FB"),        R  = _hex("#483B3FFD"),
+            E  = _hex("#D84C55FD"),        D  = _hex("#F18657FF"),
+            H  = _hex("#EE555EFE"),        C  = _hex("#312627FD"),
+            S  = _hex("#312627FD"),        SM = _hex("#E3DAE3FE")
+        }
+    },
+
     HUD = {
        DARK = _hex("#423D3AFF"),            BLUE_THEME = _hex("#70A39EFF"),
     },
