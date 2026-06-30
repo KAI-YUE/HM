@@ -87,9 +87,11 @@ function Card:_render_sfront(template, ctemplate, front, now)
 
     if self.greyed then return self:_render_seal_ed(gm, ed, ab, aname, _antim, basic, front, set, template, ctemplate, _ss) end 
     if self:_fx_mask_active() then return self:_render_masked_front(gm, ed, basic, front, ctemplate, _ss) end
-    
-    if _shader_visible(self.states)  then  ctemplate:draw_shader(self.template_shader, nil, _ss); if basic then front:draw_suit_shader(_ss) end
-    else  ctemplate:draw(); if basic then front:draw_self() end end
+
+    local base_color = front and front.base_color
+    if     base_color              then ctemplate:draw(base_color);              if basic then front:draw_self() end
+    elseif _shader_visible(self.states) then ctemplate:draw_shader(self.template_shader, nil, _ss); if basic then front:draw_suit_shader(_ss) end
+    else                                ctemplate:draw();                        if basic then front:draw_self() end end
 
     self:_render_seal_ed(gm, ed, ab, aname, _antim, basic, front, set, template, ctemplate, _ss)
 end

@@ -83,6 +83,14 @@ local function _draw_color(self, overlay)
     return { color[1], color[2], color[3], (color[4] or 1)*alpha }
 end
 
+--- Helper: target color
+local function _target_color(self, target, overlay)
+    local card = self.card
+    local front = card and card.children and card.children.front
+    if target and target.key == "template" and front and front.base_color then return _draw_color(self, front.base_color) end
+    return _draw_color(self, overlay)
+end
+
 --- Helper: refresh card face canvas state before using it as a mesh texture
 local function _refresh_face_sources(self)
     local front = self.card and self.card.children and self.card.children.front
@@ -94,8 +102,7 @@ end
 local function _draw_meshes(self, overlay)
     _refresh_face_sources(self)
     push_draw_trans(self)
-    LG.setColor(_draw_color(self, overlay))
-    for _, target in ipairs(_active_targets(self)) do if target.mesh then LG.draw(target.mesh) end end
+    for _, target in ipairs(_active_targets(self)) do if target.mesh then LG.setColor(_target_color(self, target, overlay)); LG.draw(target.mesh) end end
     LG.pop()
     LG.setColor(cw)
 end
@@ -117,10 +124,10 @@ function MeshCard:draw_shader(_shader, h, _send, _no_tilt, other_obj, ms, mr, mx
         end,
         draw_with_shader = function(obj, ctx)
             push_draw_trans(obj)
-            LG.setColor(_draw_color(obj, overlay))
             for _, target in ipairs(_active_targets(obj, ctx.is_shadow)) do
                 if not target.mesh then goto continue end 
                 obj:handle_shader(ctx.h, ctx.send, ctx.no_tilt, ctx.shader, ctx.custom_shader, ctx.tilt_shadow, ctx.draw_major, target)
+                LG.setColor(_target_color(obj, target, overlay))
                 LG.draw(target.mesh)
                 ::continue::
             end
@@ -146,7 +153,6 @@ function MeshCard:draw(overlay)
     local draw_major = card.role.draw_major or card
 
     push_draw_trans(self)
-    LG.setColor(_draw_color(self, overlay))
     
     for _, target in ipairs(_active_targets(self)) do
         local mesh = target.mesh
@@ -156,6 +162,7 @@ function MeshCard:draw(overlay)
 
         self:handle_shader(nil, send, nil, shader_key, nil, nil, draw_major, target)
         if shader:hasUniform("position_shader_mode") then shader:send("position_shader_mode", 1) end
+        LG.setColor(_target_color(self, target, overlay))
         LG.setShader(shader)
         LG.draw(mesh)
         LG.setShader()

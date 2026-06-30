@@ -21,19 +21,10 @@ end
 function CardFront:_render_face_frame(cw, ch)
     local q = self.frame_quad;                  if not q then return end
     local _, _, fw, fh = q:getViewport()
-    local sc, ox, oy = self.frame_scale or 1, self.frame_x or 0, self.frame_y or 0
-    local dw, dh     = cw*sc, ch*sc
+    local sx, sy, ox, oy = self.frame_scale_x or 1, self.frame_scale_y or 1, self.frame_x or 0, self.frame_y or 0
+    local dw, dh         = cw*sx, ch*sy
     LG.setColor(self.frame_color or { 1, 1, 1, 1 })
-    LG.draw(self.frame_img, q, 0.5*(cw - dw) + ox, 0.5*(ch - dh) + oy, 0, dw/fw, dh/fh)
-    LG.setColor(1, 1, 1, 1)
-end
-
---------------------------------------------
---- render face base
---------------------------------------------
-function CardFront:_render_face_base(cw, ch)
-    LG.setColor(self.base_color or { 1, 1, 1, 1 })
-    LG.rectangle("fill", 0, 0, cw, ch)
+    LG.draw(self.frame_img, q, 0.5*(cw - dw) + ox*cw, 0.5*(ch - dh) + oy*ch, 0, dw/fw, dh/fh)
     LG.setColor(1, 1, 1, 1)
 end
 
@@ -52,7 +43,6 @@ function CardFront:_rebuild_face_canvas()
     -- Draw in canvas-local pixel space
 	local cw, ch = self.face_px_w, self.face_px_h
 
-    self:_render_face_base(cw, ch)
     self:_render_face_frame(cw, ch)
     if self.face_style ~= "pip" then self:_render_custom_face(cw, ch)
     else self:_render_pip_face(cw, ch) end
