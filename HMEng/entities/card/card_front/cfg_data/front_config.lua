@@ -56,7 +56,7 @@ M.base = {
 M.default = {
     base_color      = cbase,
     base_tint_color = cw,
-    base_tint_range = { 0.3, 0.5 },
+    base_tint_range = { 0.02, 0.25 },
 
     --- frame setting 
     valid_frames     = { "card_frame_1", "card_frame_2" },
@@ -71,7 +71,7 @@ M.default = {
 --------------------------------
 function M.random_base_color(cfg)
     cfg = cfg or M.default
-    local p = _sample_range(cfg.base_tint_range or { 1, 1 }, 0.4)
+    local p = _sample_range(cfg.base_tint_range, 0.4)
     return lerp_color(cfg.base_color or cbase, cfg.base_tint_color or ccrm, p)
 end
 
