@@ -16,7 +16,7 @@ M.field = {
 --- Timeline for hand dealing
 ----------------------------------------
 M.hand = {
-    field_spawn     = 1.,   clear_jitter    = 1.6, 
+    field_spawn     = 2,   clear_jitter    = 1.6, 
     restore_jitter  = 1.61, open_fan       = 1.8,    
      
     drag_sort   = 3.4,      unlock         = 0.01
@@ -31,7 +31,7 @@ local T_hand, deck_spawn = M.hand, 0.35*M.deck.field_spawn  --- offsets
 for k, v in pairs(M.hand) do T_hand[k] = v + deck_spawn end 
 
 M.hand.delay_max, M.hand.delay_bias = 1, 0.5
-M.hand.draw_start_delay = math.max(0, M.deck.field_spawn + 0.5*M.deck.fade_in - M.hand.field_spawn)
+M.hand.draw_start_delay = math.max(0, M.deck.field_spawn - M.hand.field_spawn)
 M.hand.draw_group_gap = 0.7
 
 ----------------------------------------

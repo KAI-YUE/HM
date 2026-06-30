@@ -52,15 +52,15 @@ end
 --- Helper: set deal waypoint
 local function _set_deal_waypoint(card)
     local T       = card.T    
-    local base_x  = 4.2*T.w
-    local side, lift          = -1, 0.45 + 0.05*rand()
-    local sweep, overshoot    = 1.4*rand(), 0.5 + 1.2*rand()
-    local tilt, sp_s, dist_s  = 2*(rand() - 0.5), 0.05, 0.1 
+    local base_x, dist_scale   = 4.2*T.w,          0.1 
+    local side,   lift         = -1,               0.45 + 0.05*rand()
+    local sweep,  overshoot    = 1.4*rand(),       0.5 + 1.2*rand()
+    local tilt,   sp_s         = 2*(rand() - 0.5), 0.05
 
-    local _mod_x, _mod_y  = base_x + side*(sweep + overshoot)*T.w, T.y - lift*T.h
-    local _dx,    _mod_s  = abs(_mod_x - T.x), T.scale*(0.98 + 0.04*rand())
-    local speed,  dist    = max(sp_s*_dx + 0.2*rand(), 0.45 + 0.02*_dx), dist_s*_dx*T.w
-    local _t1, _t2        = clamp(( 4 + 2*rand() )/(_dx + 0.001), 0.1, 1.15), clamp(( 2 + 1*rand() )/(_dx + 0.001), 0.1, 0.75)
+    local _mod_x, _mod_y  = base_x + side*(sweep + overshoot)*T.w,             T.y - lift*T.h
+    local _dx,    _mod_s  = abs(_mod_x - T.x),                                 T.scale*(0.98 + 0.04*rand())
+    local speed,  dist    = max(sp_s*_dx + 0.2*rand(), 0.45 + 0.02*_dx),       dist_scale*_dx*T.w
+    local _t1,    _t2     = clamp(( 4 + 2*rand() )/(_dx + 0.001), 0.1, 1.15),  clamp(( 2 + 1*rand() )/(_dx + 0.001), 0.1, 0.75)
 
     card.waypoint_T = {     x     = _mod_x,   y           = _mod_y,  w = T.w,  h = T.h, 
         r = T.r + tilt,     scale = _mod_s,   smooth_time = _t1,     max_speed = speed, 
