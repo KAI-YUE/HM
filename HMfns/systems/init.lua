@@ -7,6 +7,7 @@ local mods = {
     video       = require("HMfns.systems.video_settings"),
 
     render       = require("HMfns.systems.render"),
+    layout       = require("HMfns.systems.layout"),
     
     -- Timer 
     timer        = require("HMfns.systems.timer"),
@@ -51,7 +52,7 @@ local exports = {
     { to="enqueue_drawable",      mod="render",        fn="enqueue_drawable",          kind="pure" },
     { to="wipe_drawable",         mod="render",        fn="wipe_drawable",             kind="gm" },
     { to="shadows_toggle",        mod="render",        fn="shadows_toggle",            kind="gm" },
-    { to="init_screen_pos",       mod="render",        fn="init_screen_pos",           kind="gm" },
+    { to="init_screen_pos",       mod="layout",        fn="init_screen_pos",           kind="gm" },
 
     -- Timer 
     { to="sleep",                 mod="timer",         fn="sleep",                    kind="gm" },

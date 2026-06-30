@@ -1,9 +1,10 @@
-local C       = require("HMfns.animate.color.color_const")
-local CUtils  = require("HMfns.animate.color.color_utils")
+local C, CUtils  = require("HMfns.animate.color.color_const"), require("HMfns.animate.color.color_utils")
+local TabUtils   = require("HMfns.utils.table_utils")
 
-local lerp_color = CUtils.lerp_colors
-local tint_alpha = CUtils.tint_with_alpha
-local rand       = math.random
+local lerp_color   = CUtils.lerp_colors
+local tint_alpha   = CUtils.tint_with_alpha
+local rand         = math.random
+local random_pick  = TabUtils.random_pick
 
 local _ccard    = C.CARD
 local cbase     = _ccard.BASE
@@ -16,12 +17,6 @@ local function _sample_range(range, fallback)
     if type(range) ~= "table" then return fallback end
     local a, b = range[1] or fallback, range[2] or range[1] or fallback
     return a + (b - a)*rand()
-end
-
---- Helper: random pick
-local function _random_pick(tab)
-    if type(tab) ~= "table" or not tab[1] then return end
-    return tab[rand(#tab)]
 end
 
 -----------------------------
@@ -54,9 +49,8 @@ M.base = {
 --- main: card front preset
 ----------------------------
 M.default = {
-    base_color      = cbase,
-    base_tint_color = cw,
-    base_tint_range = { 0.02, 0.25 },
+    base_color      = cbase,               base_tint_color = cw,
+    base_tint_range = { 0.02, 0.3 },
 
     --- frame setting 
     valid_frames     = { "card_frame_1", "card_frame_2" },
@@ -86,6 +80,6 @@ end
 --------------------------------
 --- frame_key
 --------------------------------
-function M.frame_key(cfg) cfg = cfg or M.default; return _random_pick(cfg.valid_frames) or cfg.frame_key or "card_frame_1" end
+function M.frame_key(cfg) cfg = cfg or M.default; return random_pick(cfg.valid_frames) or cfg.frame_key or "card_frame_1" end
 
 return M

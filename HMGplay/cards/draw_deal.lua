@@ -127,25 +127,21 @@ end
 -----------------------------------------------
 --- draw deck_2_hand
 -----------------------------------------------
---- Helper: top_k_cards 
-local function _top_k_cards(zone, k) local cards = {}; for i = 1, k do cards[i] = zone.cards[i] end; return cards end
-
---- Helper: deal hand in small physical grabs
-local function _next_grab_size(remaining) if remaining <= 3 then return remaining end; return min(remaining, rand(3, 5) ) end
+--- Helper: top_k_cards | _next_grab_size, deal hand in small physical grabs
+local function _top_k_cards(zone, k)       local cards = {}; for i = 1, k do cards[i] = zone.cards[i] end; return cards end
+local function _next_grab_size(remaining)  if remaining <= 3 then return remaining end; return min(remaining, rand(3, 5) ) end
 
 ---_________________________
 --- main: draw deck2hand
 ---_________________________
 function M.draw_deck2hand(gm, e, sort, delay, visual_dealing)
-    local hand, deck = gm.hand, gm.deck
-
-	local hand_space = e or min(#deck.cards, hand.config.card_limit - #hand.cards)
-    if hand_space <= 0 then return Y end
-    local cards = shuffle(_top_k_cards(deck, hand_space))
+    local hand, deck  = gm.hand, gm.deck
+	local hand_space  = e or min(#deck.cards, hand.config.card_limit - #hand.cards);     if hand_space <= 0 then return Y end
+    local cards       = shuffle(_top_k_cards(deck, hand_space))
 
 	sleep(gm, 0.3)
-    local i, deal_delay = 1, delay or 0.
-    local mute = Y
+    local i, deal_delay, mute = 1, delay or 0., Y; print(hand_space)
+    
     while i <= hand_space do
         local grab_size =  _next_grab_size(hand_space - i + 1)
         local grab_pause = deal_delay + 0.001*rand()

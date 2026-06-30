@@ -10,10 +10,12 @@ return function (Card)
 --- Calculate Parallax
 ---------------------------------------
 function Card:calculate_parallax()
-    Actor.calculate_parallax(self)
+    -- Actor.calculate_parallax(self)
 
-    local st, sp = self.states, self.shadow_parallax;   
+    local st, sp, zone = self.states, self.shadow_parallax, self.zone; -- if zone and zone.is_hand and zone:is_hand() then print(sp.x) end
+    sp.x = .5; 
     if not (st.dealing and st.dealing.is) then sp.y = -1; return end
+
     sp.y = -0.8
     if self.sprite_facing ~= "back" then return end
     

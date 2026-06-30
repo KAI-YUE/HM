@@ -8,9 +8,8 @@ local Parallax = {}
 function Parallax.shadow_x(gm, room_T, T)
     if not room_T or not T then return 0 end
 
-    local gparallax      = gm and gm.parallax or {}
-    local pivot_x, halfW = gparallax.pivot_x or 0.9, room_T.w/2
-    if halfW == 0 then return 0 end
+    local gparallax      = gm.parallax or {}
+    local pivot_x, halfW = gparallax.pivot_x or 0.9, room_T.w/2;        if halfW == 0 then return 0 end
 
     local raw, bound = (pivot_x - ((T.x or 0) + (T.w or 0)*0.5))/halfW, 0.07*pivot_x
     return max(-2*bound, min(bound, raw))

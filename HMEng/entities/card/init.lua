@@ -11,7 +11,7 @@ for _, pkg in ipairs(install_actions) do install(require("HMEng.entities.card.ac
 local install_factory = { "edition", "joint_canvas", "render", "set_values", "shatter", "suit_rank" }
 for _, pkg in ipairs(install_factory) do install(require("HMEng.entities.card.in_factory." .. pkg)) end
 
-local install_utils = { "get_values", "misc",  "save_load" }
+local install_utils = { "get_values", "parallax",  "save_load" }
 for _, pkg in ipairs(install_utils) do install(require("HMEng.entities.card.utils." .. pkg)) end
 
 local install_inter = { "usr_inter", "buy_sell" }
