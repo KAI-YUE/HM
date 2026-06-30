@@ -1,6 +1,7 @@
 local C = require("HMfns.animate.color.color_const")
 
 local CHUD = C.HUD
+local cw = C.WHITE
 local chk, ccrm = CHUD.DARK, C.CREAM
 local chb    = CHUD.BLUE_THEME
 local cshdw  = { 0, 0, 0, 0.28 }
@@ -17,7 +18,7 @@ M.clear = C.CLEAR
 -----------------------------
 M.panel = {
     --- basic colors
-    pass_tint   = ccrm,     base_tint   = chk,
+    pass_tint   = ccrm,     base_tint   = chk,      -- pass_tint is for the underlying white-ish shadow 
     detail_tint = chk,
 
     --- shadow

@@ -41,7 +41,7 @@ local function _panel_args(gm, side)
         _sprite(_pass_T(panel_1_T, panel_pass),                         "hud_pack", "panel_1", PANEL.pass_tint or crm, LAYER.panel - 1, "hud_panel_pass", Common.with(Common.with({}, panel_shadow), Common.pass_fit(panel_pass))),
         _sprite({ x = 0, y = 0, w = panel_T.w },                        "hud_pack", "panel_1", PANEL.base_tint or cw,  LAYER.panel, "hud_panel_1", { fit_axis = "width" }),
         _sprite(_pass_T(panel_2_T, panel_2_pass),                       "hud_pack", "panel_2", PANEL.detail_pass_tint or PANEL.pass_tint or crm, LAYER.panel, "hud_panel_2_pass", Common.pass_fit(panel_2_pass)),
-        _sprite({ x = panel_2_T.x, y = panel_2_T.y, w = panel_2_T.w },  "ui_pack",  "panel_2", PANEL.detail_tint or PANEL.base_tint or cw, LAYER.panel + 1, "hud_panel_2", { fit_axis = "width" }),
+        _sprite({ x = panel_2_T.x, y = panel_2_T.y, w = panel_2_T.w },  "hud_pack",  "panel_2", PANEL.detail_tint or PANEL.base_tint or cw, LAYER.panel + 1, "hud_panel_2", { fit_axis = "width" }),
     }
 
     _push_all(children, Profile.widgets(side, stroke_color))

@@ -1,8 +1,6 @@
 local TabUtils  = require("HMfns.utils.table_utils")
 local SND, RNG  = require("HMfns.utils.sound_utils"), require("HMfns.utils.math.rng_utils")
-local TMR       = require("HMfns.systems.timer")
 
-local sleep        = TMR.sleep
 local contains     = TabUtils.contains
 local shuffle      = TabUtils.shuffle_in_place
 local seeded_rand  = RNG.seeded_random
@@ -130,7 +128,7 @@ end
 -----------------------------------------------
 --- Helper: top_k_cards | _next_grab_size, deal hand in small physical grabs
 local function _top_k_cards(zone, k)       local cards = {}; for i = 1, k do cards[i] = zone.cards[i] end; return cards end
-local function _next_grab_size(remaining)  if remaining <= 3 then return remaining end; return min(remaining, rand(3, 5) ) end
+local function _next_grab_size(remaining)  if remaining <= 2 then return remaining end; return min(remaining, rand(2, 3) ) end
 
 --- Helper: draw one grab
 local function _draw_grab(gm, deck, hand, cards, first_i, grab_size, hand_space, sort, mute, visual_dealing)
@@ -141,30 +139,29 @@ local function _draw_grab(gm, deck, hand, cards, first_i, grab_size, hand_space,
     return Y
 end
 
---- Helper: schedule one grab
-local function _schedule_grab(gm, queue, delay, deck, hand, cards, first_i, grab_size, hand_space, sort, mute, visual_dealing)
-    gm.E_MANAGER:enqueue_event({ queue = queue, trigger = "after", delay = delay, blockable = N, blocking = N,
-        func = function() return _draw_grab(gm, deck, hand, cards, first_i, grab_size, hand_space, sort, mute, visual_dealing) end })
+--- Helper: schedule next grab
+local function _schedule_next_grab(gm, deck, hand, cards, first_i, hand_space, deal_delay, first_delay, sort, mute, visual_dealing)
+    if first_i > hand_space then return Y end
+
+    local grab_size = _next_grab_size(hand_space - first_i + 1)
+    gm.E_MANAGER:enqueue_event({ queue = "deck2hand", trigger = "after", timer = "real_s", delay = (first_i == 1) and first_delay or (deal_delay + 0.03*rand()), blockable = N, blocking = N,
+        func = function()
+            _draw_grab(gm, deck, hand, cards, first_i, grab_size, hand_space, sort, mute, visual_dealing)
+            return _schedule_next_grab(gm, deck, hand, cards, first_i + grab_size, hand_space, deal_delay, first_delay, sort, mute, visual_dealing)
+        end })
+    return Y
 end
 
 ---_________________________
 --- main: draw deck2hand
 ---_________________________
-function M.draw_deck2hand(gm, e, sort, delay, visual_dealing)
-    local hand, deck  = gm.hand, gm.deck
-	local hand_space  = e or min(#deck.cards, hand.config.card_limit - #hand.cards);     if hand_space <= 0 then return Y end
-    local cards       = shuffle(_top_k_cards(deck, hand_space))
-    local deal_queue  = "deck2hand"
+function M.draw_deck2hand(gm, e, sort, delay, visual_dealing, first_delay)
+    local hand,       deck         = gm.hand,                                gm.deck
+	local hand_space               = e or min(#deck.cards, hand.config.card_limit - #hand.cards);     if hand_space <= 0 then return Y end
+    local cards,      mute         = shuffle(_top_k_cards(deck, hand_space)), Y
+    local deal_delay, first_delay  = delay or 0.28,                           first_delay or 0.3
 
-    local i, deal_delay, mute, start_t = 1, delay or 0.12, Y, 0.3
-    
-    while i <= hand_space do
-        local grab_size, first_i = _next_grab_size(hand_space - i + 1), i
-
-        _schedule_grab(gm, deal_queue, start_t, deck, hand, cards, first_i, grab_size, hand_space, sort, mute, visual_dealing)
-        start_t = start_t + deal_delay + 0.03*rand()
-        i = i + grab_size
-    end
+    _schedule_next_grab(gm, deck, hand, cards, 1, hand_space, deal_delay, first_delay, sort, mute, visual_dealing)
     return Y
 end
 
