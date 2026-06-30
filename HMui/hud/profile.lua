@@ -49,7 +49,7 @@ end
 --- Helper: draw profile mask
 local function _draw_profile_mask(panel, child, cfg)
     local gm, box = panel and panel.gm, _profile_mask_box(child, cfg); if not (gm and box) then return end
-    local atlas = gm.T_atlas and gm.T_atlas[cfg.atlas_key or "icons"]; if not atlas then return end
+    local atlas = gm.T_atlas and gm.T_atlas[cfg.atlas_key or "icon_pack"]; if not atlas then return end
     local ok, quad = pcall(atlas.get_quad, atlas, cfg.quad_key or "paper-1"); if not ok then return end
     local _, _, qw, qh = quad:getViewport(); if not (qw and qh and qw > 0 and qh > 0) then return end
     LG.draw(atlas.image, quad, box.x, box.y, cfg.r or 0, box.w*child.rcfg.tile_size/qw, box.h*child.rcfg.tile_size/qh)
@@ -171,7 +171,7 @@ end
 --- Helper: profile mask preview
 local function _profile_mask_preview(T)
     local cfg = Layout.profile_mask; if not (cfg and cfg.draw ~= N) then return end
-    return Common.sprite(_profile_mask_preview_T(T, cfg), cfg.atlas_key or "icons", cfg.quad_key or "paper-1", cfg.tint or { 1, 1, 1, 0.42 }, LAYER.profile_picture - 1, "hud_profile_mask_preview")
+    return Common.sprite(_profile_mask_preview_T(T, cfg), cfg.atlas_key or "icon_pack", cfg.quad_key or "paper-1", cfg.tint or { 1, 1, 1, 0.42 }, LAYER.profile_picture - 1, "hud_profile_mask_preview")
 end
 
 ---______________________________

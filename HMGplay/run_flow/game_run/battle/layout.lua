@@ -117,8 +117,7 @@ end
 
 --- Helper: new reward
 local function _new_reward(gm, battle, x, y, w, column)
-    local atlas = gm.T_atlas and gm.T_atlas.icons
-    if not atlas then return end
+    local atlas = gm.T_atlas.icon_pack;     if not atlas then return end
 
     local size   = math.min(0.82, 0.45*w)
     local data   = battle.reward_pool and battle.reward_pool[column] or {}

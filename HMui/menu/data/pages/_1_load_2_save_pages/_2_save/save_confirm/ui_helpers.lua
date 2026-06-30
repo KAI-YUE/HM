@@ -16,7 +16,7 @@ local Y, N = true, false
 
 local M = {}
 
-local default_icon = { atlas_key = "icons", quad_key = "question_mark" }
+local default_icon = { atlas_key = "icon_pack", quad_key = "question_mark" }
 local popup_args = {
     text_box_T      = { x = 0, y = 0.45, w = 8.1, h = 3.35 },
     -- text_offset     = { x = 0, y = 1 },

@@ -1,8 +1,8 @@
 local C      = require("HMfns.animate.color.color_const")
 local Layout = require("HMui.hud.layout")
 
-local cw = C.WHITE
-local N  = false
+local cw    = C.WHITE
+local Y, N  = true, false
 
 local M = {}
 
@@ -14,11 +14,11 @@ function M.with(t, opts) for k, v in pairs(opts or {}) do t[k] = v end; return t
 -----------------------------
 --- transforms
 ----------------------------
-function M.copy_T(T) return { x = T.x, y = T.y, w = T.w, h = T.h, r = T.r, scale = T.scale } end
-function M.padded_T(T, pad, keep_h) local out = { x = T.x + (pad.x or 0), y = T.y + (pad.y or 0), w = T.w + (pad.w_pad or 0) }; if keep_h ~= N then out.h = T.h + (pad.h_pad or 0) elseif pad.h_pad and T.h then out.w = out.w + pad.h_pad*T.w/T.h end; return out end
-function M.pass_T(T, pass) local out = M.padded_T(T, pass or {}, N); if pass and pass.wh_ratio then out.h = out.w/(pass.wh_ratio or 1) end; return out end
-function M.pass_fit(pass) return pass and pass.wh_ratio and { fit_axis = "none" } or { fit_axis = "width" } end
-function M.profile_T(side) return M.copy_T(Layout.profile[side]) end
+function M.copy_T(T)                 return { x = T.x, y = T.y, w = T.w, h = T.h, r = T.r, scale = T.scale } end
+function M.padded_T(T, pad, keep_h)  local out = { x = T.x + (pad.x or 0), y = T.y + (pad.y or 0), w = T.w + (pad.w_pad or 0) }; if keep_h ~= N then out.h = T.h + (pad.h_pad or 0) elseif pad.h_pad and T.h then out.w = out.w + pad.h_pad*T.w/T.h end; return out end
+function M.pass_T(T, pass)           local out = M.padded_T(T, pass or {}, N); if pass and pass.wh_ratio then out.h = out.w/(pass.wh_ratio or 1) end; return out end
+function M.pass_fit(pass)            return pass and pass.wh_ratio and { fit_axis = "none" } or { fit_axis = "width" } end
+function M.profile_T(side)           return M.copy_T(Layout.profile[side]) end
 
 -----------------------------
 --- assets

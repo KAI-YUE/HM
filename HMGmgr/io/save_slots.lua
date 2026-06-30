@@ -11,7 +11,7 @@ local Y, N = true, false
 
 local SAVE_SCHEMA_VERSION = 1
 local DEFAULT_USER_NAME   = "player"
-local DEFAULT_ICON        = { atlas_key = "icons", quad_key = "question_mark" }
+local DEFAULT_ICON        = { atlas_key = "icon_pack", quad_key = "question_mark" }
 local CARD_ZONE_KEYS      = { "deck", "hand", "play", "discard" }
 
 return function(GMgr)

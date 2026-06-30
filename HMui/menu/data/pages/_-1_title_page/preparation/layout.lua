@@ -50,7 +50,7 @@ M.shader_fx = {
 -------------------------------------------------------
 M.word_mask_scale = 1.14
 M.word_mask_paper = {
-    id = "press_any_henshin_paper_mask",    atlas = "icons", 
+    id = "press_any_henshin_paper_mask",    atlas = "icon_pack",
     key = "henshin_paper",                  enabled = true,
     center_bias = 0, y_bias = -0.18, w = 5.3, h = 0.3, r = 0.0, dist = 0.53,
 }

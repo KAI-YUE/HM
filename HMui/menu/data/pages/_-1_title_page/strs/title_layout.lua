@@ -16,9 +16,9 @@ M.kanji = {
     { id = "hen",   mask = "_jp1_hen_mask",   kanji = "_jp1_hen_kanji",   x = 0.8,  y = 0.80, mask_x_bias = 0.70,  mask_y_bias = 0.05, kanji_x_bias = 0.50, kanji_y_bias = 0.16, mask_w = 4.91, kanji_w = 3.60, r = 0.0,
         decorators = {
             --- chef_hat
-            { id = "chef_hat_mask", atlas = "icons", key = "chef_hat_mask", stage = "title", x_bias = 2.00, y_bias = -0.60, w = 1.58, r =  -0.1, tint = cpaper, dist = 2.5, shadow_layer = 10,  face_layer = 19, manual_enter = Y, paint = { shader = "paper_sway", speed = 0.5 } },
-            { id = "chef_hat_pad",  atlas = "icons", key = "chef_hat_mask", stage = "title", x_bias = 2.20, y_bias = -0.26, w = 1.1, r =  -0.,   tint = cpaper, dist = 2.5, shadow_layer = 10,  face_layer = 30, manual_enter = Y,  shadow = N },
-            { id = "chef_hat",      atlas = "icons", key = "chef_hat",      stage = "title", x_bias = 2.20, y_bias = -0.565, w = 1.22, r =  -0.1, tint = ctd,    dist = 0,   shadow_layer = 10, face_layer = 30, manual_enter = Y, shadow = N },
+            { id = "chef_hat_mask", atlas = "icon_pack", key = "chef_hat_mask", stage = "title", x_bias = 2.00, y_bias = -0.60, w = 1.58, r =  -0.1, tint = cpaper, dist = 2.5, shadow_layer = 10,  face_layer = 19, manual_enter = Y, paint = { shader = "paper_sway", speed = 0.5 } },
+            { id = "chef_hat_pad",  atlas = "icon_pack", key = "chef_hat_mask", stage = "title", x_bias = 2.20, y_bias = -0.26, w = 1.1, r =  -0.,   tint = cpaper, dist = 2.5, shadow_layer = 10,  face_layer = 30, manual_enter = Y,  shadow = N },
+            { id = "chef_hat",      atlas = "icon_pack", key = "chef_hat",      stage = "title", x_bias = 2.20, y_bias = -0.565, w = 1.22, r =  -0.1, tint = ctd,    dist = 0,   shadow_layer = 10, face_layer = 30, manual_enter = Y, shadow = N },
         },
     },
 
@@ -42,16 +42,16 @@ M.kanji = {
         },
         decorators = {
             --- rice_ball
-            { id = "rice_ball_mask",     atlas = "icons", key = "rice_ball_mask",     stage = "title", x_bias = 1.215, y_bias = 2.11, w = 0.74, r = 0.,  tint = ccrm,  dist = 2.0, shadow_layer = 10, face_layer = 30, manual_enter = Y },
-            { id = "rice_ball_sea_weed", atlas = "icons", key = "rice_ball_sea_weed", stage = "title", x_bias = 1.4, y_bias = 2.48, w = 0.4,     r = 0, tint = cw,    dist = 2.1, shadow_layer = 10, face_layer = 30, manual_enter = Y },
-            { id = "rice_ball_line",     atlas = "icons", key = "rice_ball_line",     stage = "title", x_bias = 1.2, y_bias = 2.11, w = 0.81,    r = 0., tint = ctd,   dist = 2.2, shadow_layer = 10, face_layer = 30, manual_enter = Y },
+            { id = "rice_ball_mask",     atlas = "icon_pack", key = "rice_ball_mask",     stage = "title", x_bias = 1.215, y_bias = 2.11, w = 0.74, r = 0.,  tint = ccrm,  dist = 2.0, shadow_layer = 10, face_layer = 30, manual_enter = Y },
+            { id = "rice_ball_sea_weed", atlas = "icon_pack", key = "rice_ball_sea_weed", stage = "title", x_bias = 1.4, y_bias = 2.48, w = 0.4,     r = 0, tint = cw,    dist = 2.1, shadow_layer = 10, face_layer = 30, manual_enter = Y },
+            { id = "rice_ball_line",     atlas = "icon_pack", key = "rice_ball_line",     stage = "title", x_bias = 1.2, y_bias = 2.11, w = 0.81,    r = 0., tint = ctd,   dist = 2.2, shadow_layer = 10, face_layer = 30, manual_enter = Y },
         },
     },
 }
 
 M.english = {
     paper = {
-        id = "title_eng_paper", atlas = "icons", key = "henshin_paper",
+        id = "title_eng_paper", atlas = "icon_pack", key = "henshin_paper",
         x = 3.9, y = 4.3, w = 8, r = -0.02,
         tint = cpaper, dist = 1.5, shadow_alpha = 0.24,
         paint = { shader = "grass_sway", speed = 0.5 },

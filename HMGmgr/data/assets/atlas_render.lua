@@ -96,7 +96,7 @@ function GMgr:shared_atlas_settings()
         grass_dec = Atlas(root_tex.."map/grass/",        "grass_dec", "linear", "linear", atlas_smooth),
 
         -- ui experiments
-        icons     = Atlas(root_tex.."ui/", "icon_pack",  "linear", "linear", atlas_smooth),
+        icon_pack = Atlas(root_tex.."ui/", "icon_pack",  "linear", "linear", atlas_smooth),
         ui_pack   = Atlas(root_tex.."ui/", "ui_pack",    "linear", "linear", atlas_smooth),
 
         -- pawns 

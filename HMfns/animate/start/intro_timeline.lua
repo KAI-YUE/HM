@@ -19,6 +19,7 @@ M.hand = {
     field_spawn     = 1.,   clear_jitter    = 1.6, 
     restore_jitter  = 1.61,
     open_fan       = 1.8,    
+    draw_group_gap = 0.12,
      
     drag_sort   = 3.4,      unlock         = 0.01
 }

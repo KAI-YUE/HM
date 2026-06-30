@@ -44,7 +44,7 @@ M.profile = {
 }
 
 M.profile_mask  = { 
-    atlas_key = "icons",    quad_key = "paper-1", 
+    atlas_key = "icon_pack",    quad_key = "paper-1",
     x = -1,  y = 0,         w = 3,      h = 1, 
     relative = Y,           alpha_cutoff = 0.05,    -- mask texture alpha threshold; higher removes softer edge pixels
     draw = Y,               tint = { 1, 1, 1, 1 } 

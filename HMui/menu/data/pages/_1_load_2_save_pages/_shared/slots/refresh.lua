@@ -13,7 +13,7 @@ local Y, N = true, false
 
 local M = {}
 
-local default_icon = { atlas_key = "icons", quad_key = "question_mark" }
+local default_icon = { atlas_key = "icon_pack", quad_key = "question_mark" }
 
 --------------------------------------------------
 --- Helper: current slot widget

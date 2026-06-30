@@ -10,8 +10,9 @@ local play_clip    = SND.play_clip
  
 local min, max  = math.min, math.max
 local rad, abs  = math.rad, math.abs
-local rand     = math.random
-local Y, N     = true, false
+local rand      = math.random
+
+local Y, N   = true, false
 
 --- Helper: clamp
 local function clamp(v, lo, hi) if lo > hi then return 0.5*(lo + hi) end; return max(lo, min(hi, v)) end
@@ -117,11 +118,11 @@ end
 --__________________________
 --- main: draw from to 
 --__________________________
-function M.draw_from_to(gm, from, to, percent, dir, sort, card, delay, mute, stay_flipped, vol, discarded_only, visual_dealing)
+function M.draw_from_to(gm, from, to, percent, dir, sort, card, delay, mute, stay_flipped, vol, discarded_only, visual_dealing, queue)
 	local EM, sort, _tb  = gm.E_MANAGER, sort, "before"
     local percent, delay = percent or 50, delay or 0.1;     if dir == "down" then percent = 1 - percent end
 	
-    EM:enqueue_event({ trigger = _tb, delay = delay, func = function() return _draw_card(gm, from, to, card, percent, sort, mute, stay_flipped, vol, discarded_only, visual_dealing) end })
+    EM:enqueue_event({ queue = queue, trigger = _tb, delay = delay, func = function() return _draw_card(gm, from, to, card, percent, sort, mute, stay_flipped, vol, discarded_only, visual_dealing) end })
 end
 
 -----------------------------------------------
@@ -131,6 +132,21 @@ end
 local function _top_k_cards(zone, k)       local cards = {}; for i = 1, k do cards[i] = zone.cards[i] end; return cards end
 local function _next_grab_size(remaining)  if remaining <= 3 then return remaining end; return min(remaining, rand(3, 5) ) end
 
+--- Helper: draw one grab
+local function _draw_grab(gm, deck, hand, cards, first_i, grab_size, hand_space, sort, mute, visual_dealing)
+    for j = 0, grab_size - 1 do
+        local index, card = first_i + j, cards[first_i + j]
+        _draw_card(gm, deck, hand, card, index*100/hand_space, sort, mute, nil, nil, nil, visual_dealing)
+    end
+    return Y
+end
+
+--- Helper: schedule one grab
+local function _schedule_grab(gm, queue, delay, deck, hand, cards, first_i, grab_size, hand_space, sort, mute, visual_dealing)
+    gm.E_MANAGER:enqueue_event({ queue = queue, trigger = "after", delay = delay, blockable = N, blocking = N,
+        func = function() return _draw_grab(gm, deck, hand, cards, first_i, grab_size, hand_space, sort, mute, visual_dealing) end })
+end
+
 ---_________________________
 --- main: draw deck2hand
 ---_________________________
@@ -138,22 +154,15 @@ function M.draw_deck2hand(gm, e, sort, delay, visual_dealing)
     local hand, deck  = gm.hand, gm.deck
 	local hand_space  = e or min(#deck.cards, hand.config.card_limit - #hand.cards);     if hand_space <= 0 then return Y end
     local cards       = shuffle(_top_k_cards(deck, hand_space))
+    local deal_queue  = "deck2hand"
 
-	sleep(gm, 0.3)
-    local i, deal_delay, mute = 1, delay or 0., Y; print(hand_space)
+    local i, deal_delay, mute, start_t = 1, delay or 0.12, Y, 0.3
     
     while i <= hand_space do
-        local grab_size =  _next_grab_size(hand_space - i + 1)
-        local grab_pause = deal_delay + 0.001*rand()
+        local grab_size, first_i = _next_grab_size(hand_space - i + 1), i
 
-        for j = 0, grab_size - 1 do
-            local index = i + j
-            local card = cards[index]
-            local stagger = 0.
-            M.draw_from_to(gm, deck, hand, index*100/hand_space, "up", sort, card, stagger, mute, nil, nil, nil, visual_dealing)
-        end
-
-        sleep(gm, grab_pause)
+        _schedule_grab(gm, deal_queue, start_t, deck, hand, cards, first_i, grab_size, hand_space, sort, mute, visual_dealing)
+        start_t = start_t + deal_delay + 0.03*rand()
         i = i + grab_size
     end
     return Y

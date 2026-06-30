@@ -1,6 +1,6 @@
 return {
     --- basic settings
-    atlas_key = "icons",        keys = { "fork", "knife" },
+    atlas_key = "icon_pack",        keys = { "fork", "knife" },
 
     --- movement settings
     move_time = 0.18,           settle_speed = 12,

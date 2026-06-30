@@ -16,7 +16,7 @@ local Y, N = true, false
 
 local M = {}
 
-local default_icon = { atlas_key = "icons", quad_key = "question_mark" }
+local default_icon = { atlas_key = "icon_pack", quad_key = "question_mark" }
 
 --- Helper: sab_lang | sab_textfx_sampling | slot_summary_line_spacing
 local function sab_lang(gm)                return { key = "sab", font_type = "SAB", font = gm and gm.g_fonts and gm.g_fonts.SAB } end

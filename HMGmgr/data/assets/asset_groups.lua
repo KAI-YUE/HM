@@ -8,6 +8,7 @@ local asset_group_tabs = { "loaded", "owners", "managed" }
 local groups = {
     title = {
         { key = "title_pack",      dir = root_tex .. "ui/",        asset = "title_pack", filter_min = "linear", filter_mag = "linear", image_settings = { mipmaps = Y, mipmap_filter = "linear" } },
+        { key = "icon_pack",       dir = root_tex .. "ui/",        asset = "icon_pack",  filter_min = "linear", filter_mag = "linear", image_settings = { mipmaps = Y, mipmap_filter = "linear" } },
         { key = "title_map_dummy", dir = root_tex .. "map/dummy/", asset = "map",        filter_min = "linear", filter_mag = "linear", image_settings = { mipmaps = Y, mipmap_filter = "linear" } },
         { key = "title_map_blur",  dir = root_tex .. "map/dummy/", asset = "title_blur", filter_min = "linear", filter_mag = "linear", image_settings = { mipmaps = Y, mipmap_filter = "linear" } },
     },

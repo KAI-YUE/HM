@@ -28,7 +28,7 @@ function M.sprite_child(id, quad_key, T, args)
     return {
         --- basics
         style = "sprite_in_page",             T = T,
-        id    = id,                           atlas_key = "icons",
+        id    = id,                           atlas_key = "icon_pack",
         quad_key = quad_key,                  fit_axis = "width",
 
         --- hit settings

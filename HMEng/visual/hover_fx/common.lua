@@ -6,7 +6,7 @@ local M = {}
 --- draw_alpha | atlas
 --------------------------------------
 function M.draw_alpha(ctx, alpha) if alpha ~= nil then return alpha end; return (ctx and ctx.draw_alpha) or 1 end
-function M.atlas(gm, cfg) return gm and gm.T_atlas and gm.T_atlas[(cfg and cfg.atlas_key) or "icons"] end
+function M.atlas(gm, cfg) return gm and gm.T_atlas and gm.T_atlas[(cfg and cfg.atlas_key) or "icon_pack"] end
 
 ----------------------------------------
 --- color_alpha

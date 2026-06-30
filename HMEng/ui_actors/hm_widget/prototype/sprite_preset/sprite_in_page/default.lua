@@ -6,7 +6,7 @@ local Y, N = true, false
 return {
     --- sprite settings
     renderer             = "single_sprite",
-    atlas_key            = "icons",             fit_axis        = "width",
+    atlas_key            = "icon_pack",             fit_axis        = "width",
     sprite_mask_key      = N,
 
     --- hit settings
