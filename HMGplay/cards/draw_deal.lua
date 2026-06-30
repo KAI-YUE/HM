@@ -59,13 +59,13 @@ local function _set_deal_waypoint(card)
 
     local _mod_x, _mod_y  = base_x + side*(sweep + overshoot)*T.w, T.y - lift*T.h
     local _dx,    _mod_s  = abs(_mod_x - T.x), T.scale*(0.98 + 0.04*rand())
-    local speed,  dist    = sp_s*_dx + 0.2*rand(), dist_s*_dx*T.w
-    local _t1, _t2        = clamp(( 4 + 2*rand() )/(_dx + 0.001), 0.1, 5), clamp(( 2 + 1*rand() )/(_dx + 0.001), 0.1, 3)
+    local speed,  dist    = max(sp_s*_dx + 0.2*rand(), 0.45 + 0.02*_dx), dist_s*_dx*T.w
+    local _t1, _t2        = clamp(( 4 + 2*rand() )/(_dx + 0.001), 0.1, 1.15), clamp(( 2 + 1*rand() )/(_dx + 0.001), 0.1, 0.75)
 
     card.waypoint_T = {     x     = _mod_x,   y           = _mod_y,  w = T.w,  h = T.h, 
         r = T.r + tilt,     scale = _mod_s,   smooth_time = _t1,     max_speed = speed, 
         arrive_dist = dist, landing_smooth_time = _t2, 
-        landing_max_speed = 1 + 0.1*rand(),
+        landing_max_speed = 1.4 + 0.2*rand(),
         pinch_on_arrive = not card.defer_hand_flip and "x",
     }
 end
