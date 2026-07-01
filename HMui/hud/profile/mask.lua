@@ -9,7 +9,7 @@ local M = {}
 --- config
 -----------------------------
 function M.cfg(opts)
-    if opts and opts.mask == N then return end
+    if opts and opts.mask == N             then return end
     if type(opts and opts.mask) == "table" then return opts.mask end
     return Layout.profile_mask
 end
@@ -19,23 +19,32 @@ end
 ----------------------------
 --- Helper: sub config
 local function _sub_cfg(cfg, sub)
+    local _atlas, _relative = sub.atlas_key or cfg.atlas_key, (sub.relative ~= nil and sub.relative) or cfg.relative
     return {
-        atlas_key = sub.atlas_key or cfg.atlas_key,
-        quad_key  = sub.quad_key,
-        x = sub.x, y = sub.y, w = sub.w, h = sub.h, r = sub.r,
-        relative = sub.relative ~= nil and sub.relative or cfg.relative,
-        fit_axis = sub.fit_axis or cfg.fit_axis,
-        draw = sub.draw, tint = sub.tint,
+        --- basics 
+        atlas_key = _atlas,        quad_key      = sub.quad_key,
+        
+        --- pos
+        x         = sub.x,         x_from_right  = sub.x_from_right,
+        y         = sub.y,         w             = sub.w, 
+        h         = sub.h,         r             = sub.r,
+        relative  = _relative,     fit_axis      = sub.fit_axis or cfg.fit_axis,
+        
+        --- draw & color 
+        draw      = sub.draw,      tint          = sub.tint,
     }
 end
 
 -----------------------------
 --- geometry
 -----------------------------
+--- Helper: box x
+local function _box_x(cfg, VT, w, rel) if cfg.x_from_right then return VT.w - cfg.x_from_right*rel - w end; return (cfg.x or 0)*rel end
+
 function M.box(child, cfg)
     local VT = child and child.VT; if not VT then return end
-    if cfg.relative ~= N then return { x = (cfg.x or 0)*VT.w, y = (cfg.y or 0)*VT.h, w = (cfg.w or 1)*VT.w, h = (cfg.h or 1)*VT.h } end
-    return { x = cfg.x or 0, y = cfg.y or 0, w = cfg.w or VT.w, h = cfg.h or VT.h }
+    if cfg.relative ~= N then local w, h = (cfg.w or 1)*VT.w, (cfg.h or 1)*VT.h; return { x = _box_x(cfg, VT, w, VT.w), y = (cfg.y or 0)*VT.h, w = w, h = h } end
+    local w, h = cfg.w or VT.w, cfg.h or VT.h; return { x = _box_x(cfg, VT, w, 1), y = cfg.y or 0, w = w, h = h }
 end
 
 function M.fit_box(box, cfg, quad)

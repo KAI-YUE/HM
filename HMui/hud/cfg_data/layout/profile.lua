@@ -16,8 +16,8 @@ M.profile_mask  = {
     atlas_key = "hud_pack",        quad_key = "hud_masks",
     
     --- pos
-    x         = 4,                 y         = 0,  
-    w         = 1.3,               fit_axis  = "width",
+    x_from_right = -4.5,             y       = 2,  
+    w         = 1.25,               fit_axis  = "width",
     relative  = Y,                   
     
     --- color 

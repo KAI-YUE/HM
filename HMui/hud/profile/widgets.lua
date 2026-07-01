@@ -35,9 +35,12 @@ end
 -----------------------------
 --- contour
 -----------------------------
+--- Helper: profile mask preview x
+local function _profile_mask_preview_x(T, cfg, w, rel) if cfg.x_from_right then return T.x + T.w - cfg.x_from_right*rel - w end; return T.x + (cfg.x or 0)*rel end
+
 local function _profile_mask_preview_T(T, cfg)
-    if cfg.relative ~= N then return { x = T.x + (cfg.x or 0)*T.w, y = T.y + (cfg.y or 0)*T.h, w = (cfg.w or 1)*T.w, h = (cfg.h or 1)*T.h, r = cfg.r } end
-    return { x = T.x + (cfg.x or 0), y = T.y + (cfg.y or 0), w = cfg.w or T.w, h = cfg.h or T.h, r = cfg.r }
+    if cfg.relative ~= N then local w, h = (cfg.w or 1)*T.w, (cfg.h or 1)*T.h; return { x = _profile_mask_preview_x(T, cfg, w, T.w), y = T.y + (cfg.y or 0)*T.h, w = w, h = h, r = cfg.r } end
+    local w, h = cfg.w or T.w, cfg.h or T.h; return { x = _profile_mask_preview_x(T, cfg, w, 1), y = T.y + (cfg.y or 0), w = w, h = h, r = cfg.r }
 end
 
 local function _profile_mask_preview_fit(T, cfg) local out = _profile_mask_preview_T(T, cfg); if not cfg.h and cfg.fit_axis == "width" then out.h = nil end; return out end
