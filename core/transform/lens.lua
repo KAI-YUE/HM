@@ -31,10 +31,9 @@ end
 -- main
 ---__________________
 function Lens:init(args, height, stages, sharpen)
-    args = _lens_args(args, height, stages, sharpen)
+    args,        self.layers   = _lens_args(args, height, stages, sharpen), {}
     self.stages, self.sharpen  = args.stages or 1, args.sharpen or 0
-    self.width, self.height    = 0, 0
-    self.layers   = {}
+    self.width,  self.height   = 0, 0
 
     self:_init_shaders()
     self:resize(args.width or 1, args.height or 1)
@@ -65,14 +64,11 @@ end
 ----------------------------
 function Lens:draw(dfn)
     local old_canvas, old_shader = LG.getCanvas(), LG.getShader()
-    LG.setCanvas(self.layers[1])
-    LG.clear(0, 0, 0, 0)
-    LG.setShader(self.shader_fxaa)
-    LG.push()
-    LG.origin()
-    dfn()
-    LG.pop()
-    _restore_canvas(old_canvas)
+    
+    LG.setCanvas(self.layers[1]);    LG.clear(0, 0, 0, 0)
+    LG.setShader(self.shader_fxaa);  LG.push()
+    LG.origin();                     dfn()
+    LG.pop();                       _restore_canvas(old_canvas)
     LG.setShader(old_shader)
 end
 
@@ -83,14 +79,10 @@ end
 local function stage_by_stage(self, old_canvas, old_shader)
     for stage, canvas in ipairs(self.layers) do
         if stage <= 1 then goto continue end 
-        LG.setCanvas(canvas)
-        LG.clear(0, 0, 0, 0)
-        LG.setShader(self.shader_fxaa)
-        LG.push()
-        LG.origin()
-        LG.draw(self.layers[stage - 1], 0, 0)
-        LG.pop()
-        LG.setShader(old_shader)
+        LG.setCanvas(canvas);               LG.clear(0, 0, 0, 0)
+        LG.setShader(self.shader_fxaa);     LG.push()
+        LG.origin();                        LG.draw(self.layers[stage - 1], 0, 0)
+        LG.pop();                           LG.setShader(old_shader)
         _restore_canvas(old_canvas)
         ::continue::
     end
@@ -107,16 +99,11 @@ function Lens:render(x, y, sx, sy)
     local function _handle_rest() LG.draw(final, x or 0, y or 0, 0, sx or 1, sy or 1); LG.setShader(old_shader) end
     if not self.sharp_pass then return _handle_rest() end
     
-    LG.setCanvas(self.sharp_pass)
-    LG.clear(0, 0, 0, 0)
-    LG.setShader(self.shader_sharpen)
-    LG.push()
-    LG.origin()
-    LG.draw(final, 0, 0)
-    LG.pop()
-    LG.setShader(old_shader)
-    _restore_canvas(old_canvas)
-    final = self.sharp_pass
+    LG.setCanvas(self.sharp_pass);          LG.clear(0, 0, 0, 0)
+    LG.setShader(self.shader_sharpen);      LG.push()
+    LG.origin();                            LG.draw(final, 0, 0)
+    LG.pop();                               LG.setShader(old_shader)
+    _restore_canvas(old_canvas);            final = self.sharp_pass
 
     return _handle_rest()
 end

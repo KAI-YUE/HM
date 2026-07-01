@@ -35,36 +35,38 @@ local function _sub_cfg(cfg, sub)
     }
 end
 
------------------------------
---- geometry
------------------------------
+-----------------------------------------------
+--- box
+-----------------------------------------------
 --- Helper: box x
 local function _box_x(cfg, VT, w, rel) if cfg.x_from_right then return VT.w - cfg.x_from_right*rel - w end; return (cfg.x or 0)*rel end
-
 function M.box(child, cfg)
     local VT = child and child.VT; if not VT then return end
     if cfg.relative ~= N then local w, h = (cfg.w or 1)*VT.w, (cfg.h or 1)*VT.h; return { x = _box_x(cfg, VT, w, VT.w), y = (cfg.y or 0)*VT.h, w = w, h = h } end
     local w, h = cfg.w or VT.w, cfg.h or VT.h; return { x = _box_x(cfg, VT, w, 1), y = cfg.y or 0, w = w, h = h }
 end
 
+-----------------------------------------------
+--- fit_box
+-----------------------------------------------
 function M.fit_box(box, cfg, quad)
     local _, _, qw, qh = quad:getViewport(); if not (qw and qh and qw > 0 and qh > 0) then return end
     if not cfg.h and cfg.fit_axis == "width" then box.h = box.w*qh/qw end
     return box, qw, qh
 end
 
+-----------------------------------------------
+--- quad 
+-----------------------------------------------
 function M.quad(gm, cfg)
-    local atlas = gm and gm.T_atlas and gm.T_atlas[cfg.atlas_key or "icon_pack"]; if not atlas then return end
-    local ok, quad = pcall(atlas.get_quad, atlas, cfg.quad_key or "paper-1"); if not ok then return end
+    local atlas = gm and gm.T_atlas and gm.T_atlas[cfg.atlas_key or "icon_pack"];  if not atlas then return end
+    local ok, quad = pcall(atlas.get_quad, atlas, cfg.quad_key or "paper-1");      if not ok then return end
     return atlas, quad
 end
 
-function M.sub_cfg(cfg, key)
-    local sub = cfg and cfg[key]; if type(sub) ~= "table" then return end
-    if type(sub[1]) == "table" then return _sub_cfg(cfg, sub[1]) end
-    return _sub_cfg(cfg, sub)
-end
-
+-----------------------------------------------
+--- sub_cfgs
+-----------------------------------------------
 function M.sub_cfgs(cfg, key)
     local sub, out = cfg and cfg[key], {}; if type(sub) ~= "table" then return out end
     if type(sub[1]) ~= "table" then out[1] = _sub_cfg(cfg, sub); return out end
@@ -72,6 +74,9 @@ function M.sub_cfgs(cfg, key)
     return out
 end
 
+-----------------------------------------------
+--- rect
+-----------------------------------------------
 function M.rect(panel, child, cfg)
     local gm, box = panel and panel.gm, M.box(child, cfg); if not (gm and box) then return end
     local atlas, quad = M.quad(gm, cfg); if not quad then return end
@@ -88,6 +93,9 @@ function M.draw(panel, child, cfg)
     LG.draw(r.atlas.image, r.quad, r.box.x, r.box.y, cfg.r or 0, r.w/r.qw, r.h/r.qh)
 end
 
+-----------------------------------------------
+--- draw_visible
+-----------------------------------------------
 function M.draw_visible(panel, child, cfg)
     if cfg.draw == N then return end
     local tint = cfg.tint or { 1, 1, 1, 0.42 }
@@ -96,21 +104,16 @@ function M.draw_visible(panel, child, cfg)
     LG.setColor(1, 1, 1, 1)
 end
 
-function M.draw_visible_sub(panel, child, cfg, key)
-    local sub = M.sub_cfg(cfg, key); if not (sub and sub.draw ~= N) then return end
-    local tint = sub.tint or cfg.tint or { 1, 1, 1, 0.42 }
-    LG.setColor(tint[1] or 1, tint[2] or 1, tint[3] or 1, tint[4] or 1)
-    M.draw(panel, child, sub)
-    LG.setColor(1, 1, 1, 1)
-end
-
+-----------------------------------------------
+--- draw_visible_subs
+-----------------------------------------------
 function M.draw_visible_subs(panel, child, cfg, key)
     for _, sub in ipairs(M.sub_cfgs(cfg, key)) do
-        if sub.draw ~= N then
-            local tint = sub.tint or cfg.tint or { 1, 1, 1, 0.42 }
-            LG.setColor(tint[1] or 1, tint[2] or 1, tint[3] or 1, tint[4] or 1)
-            M.draw(panel, child, sub)
-        end
+        if sub.draw == N then goto continue end 
+        local tint = sub.tint or cfg.tint or { 1, 1, 1, 0.42 }
+        LG.setColor(tint[1] or 1, tint[2] or 1, tint[3] or 1, tint[4] or 1)
+        M.draw(panel, child, sub)
+        ::continue::
     end
     LG.setColor(1, 1, 1, 1)
 end
