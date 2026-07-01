@@ -74,6 +74,12 @@ function M.sub_cfgs(cfg, key)
     return out
 end
 
+-----------------------------
+--- rect helpers
+-----------------------------
+--- Helper: pixel box
+local function _px_box(box, tz) return { x = box.x*tz, y = box.y*tz, w = box.w*tz, h = box.h*tz } end
+
 -----------------------------------------------
 --- rect
 -----------------------------------------------
@@ -81,8 +87,8 @@ function M.rect(panel, child, cfg)
     local gm, box = panel and panel.gm, M.box(child, cfg); if not (gm and box) then return end
     local atlas, quad = M.quad(gm, cfg); if not quad then return end
     local qw, qh; box, qw, qh = M.fit_box(box, cfg, quad); if not box then return end
-    local tz = child.rcfg.tile_size
-    return { x = box.x, y = box.y, w = box.w*tz, h = box.h*tz, box = box, qw = qw, qh = qh, atlas = atlas, quad = quad }
+    local pbox = _px_box(box, child.rcfg.tile_size)
+    return { x = pbox.x, y = pbox.y, w = pbox.w, h = pbox.h, box = box, pbox = pbox, qw = qw, qh = qh, atlas = atlas, quad = quad }
 end
 
 -----------------------------
@@ -90,7 +96,7 @@ end
 -----------------------------
 function M.draw(panel, child, cfg)
     local r = M.rect(panel, child, cfg); if not r then return end
-    LG.draw(r.atlas.image, r.quad, r.box.x, r.box.y, cfg.r or 0, r.w/r.qw, r.h/r.qh)
+    LG.draw(r.atlas.image, r.quad, r.x, r.y, cfg.r or 0, r.w/r.qw, r.h/r.qh)
 end
 
 -----------------------------------------------

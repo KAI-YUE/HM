@@ -16,7 +16,7 @@ M.profile_mask  = {
     atlas_key = "hud_pack",        quad_key = "hud_masks",
     
     --- pos
-    x_from_right = -4.5,             y       = 2,  
+    x         = 0.08,               y       = 0.10,
     w         = 1.25,               fit_axis  = "width",
     relative  = Y,                   
     
@@ -30,9 +30,9 @@ M.profile_mask  = {
     canvas_scale_max  = 5,
     
     extension = {
-        { atlas_key = "hud_pack", quad_key = "hud_masks_extension_1", x = -1.00, y = 0.00, w = 0.65, fit_axis = "width", relative = Y, draw = Y, tint = { 0.45, 0.8, 1, 0.55 } },
-        { atlas_key = "hud_pack", quad_key = "hud_masks_extension_2", x = -0.50, y = 0.00, w = 0.51, fit_axis = "width", relative = Y, draw = Y, tint = { 0.45, 0.8, 1, 0.55 } },
-        { atlas_key = "hud_pack", quad_key = "hud_masks_extension_3", x = -0.25, y = 0.00, w = 0.25, fit_axis = "width", relative = Y, draw = Y, tint = { 0.45, 0.8, 1, 0.55 } },
+        { atlas_key = "hud_pack", quad_key = "hud_masks_extension_1", x = 1.00, y = 0.00, w = 0.65, fit_axis = "width", relative = Y, draw = Y, tint = { 0.45, 0.8, 1, 0.55 } },
+        -- { atlas_key = "hud_pack", quad_key = "hud_masks_extension_2", x = -0.50, y = 0.00, w = 0.51, fit_axis = "width", relative = Y, draw = Y, tint = { 0.45, 0.8, 1, 0.55 } },
+        -- { atlas_key = "hud_pack", quad_key = "hud_masks_extension_3", x = -0.25, y = 0.00, w = 0.25, fit_axis = "width", relative = Y, draw = Y, tint = { 0.45, 0.8, 1, 0.55 } },
     },
     contour   = { atlas_key = "hud_pack", quad_key = "profile_outer",          x = 0.08,  y = 0.1, w = 1.4, fit_axis = "width", relative = Y, tint = { 1, 1, 1, 1 } },
 }
