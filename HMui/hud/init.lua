@@ -27,11 +27,17 @@ local ICONS, BAR_BG =  Theme.icons or {}, Theme.bar_bg or {}
 --- Helper: push all
 local function _push_all(dst, src) for _, v in ipairs(src or {}) do dst[#dst + 1] = v end end
 
+-----------------------------
+--- temporary layout tuning
+----------------------------
+--- Helper: show part
+local function _show_part(key) local v = Layout.show and Layout.show[key]; if v == nil then return Y end; return v ~= N end
+
 --- Helper: panel args
 local function _panel_args(gm, side)
     local foe,          stroke_color  = (side == "foe"),            PROFILE.stroke and PROFILE.stroke[side] or cw
     local panel_T,      panel_2       = Common.panel_T(gm, side),   Layout.panel_2
-    local panel_2_T                   = Common.panel_2_T(gm, panel_2)
+    local panel_2_T                   = Common.panel_2_T(gm, panel_2, panel_T)
     local panel_1_T,    panel_pass    = { x = 0, y = 0, w = panel_T.w, h = panel_T.h }, Layout.panel_pass or {}
     local panel_2_pass, panel_shadow  = Layout.panel_2_pass or {},                      { shadow = PANEL.shadow ~= N, shadow_color = PANEL.shadow_color or { 0, 0, 0, 0.28 }, widget_dist = PANEL.widget_dist or 1.25, shadow_layer = PANEL.shadow_layer, face_layer = PANEL.face_layer }
     local icon_T,       bar_bg        = Layout.icons,                                   Layout.bar_bg
@@ -46,14 +52,16 @@ local function _panel_args(gm, side)
     local profile_icon = PROFILE.icon and PROFILE.icon[side] or (foe and "chat" or "chef_hat")
 
     _push_all(children, Profile.widgets(side, stroke_color))
-    _push_all(children, {
-        _sprite(_copy_T(icon_T.profile[side]), "icon_pack", profile_icon,              nil, LAYER.icon, "hud_profile_icon"),
-        _sprite(_copy_T(icon_T.hp),            "icon_pack", ICONS.hp or "heart",       nil, LAYER.icon, "hud_hp_icon"),
-        _sprite(_copy_T(icon_T.full),          "icon_pack", ICONS.full or "muffin",    nil, LAYER.icon, "hud_full_icon"),
-        _sprite(_copy_T(icon_T.money),         "icon_pack", ICONS.money or "coin",     nil, LAYER.icon, "hud_money_icon"),
-        _sprite(_copy_T(bar_bg.hp),            "ui_pack",   "btn_mask",                BAR_BG.hp or { 1, 1, 1, 0.46 }, LAYER.bar - 1, "hud_hp_bar_bg"),
-        _sprite(_copy_T(bar_bg.full),          "ui_pack",   "btn_mask", BAR_BG.full or { 1, 1, 1, 0.46 }, LAYER.bar - 1, "hud_full_bar_bg"),
-    })
+    if _show_part("icons") then _push_all(children, {
+        _sprite(_copy_T(icon_T.profile[side]), "icon_pack", profile_icon,           nil, LAYER.icon, "hud_profile_icon"),
+        _sprite(_copy_T(icon_T.hp),            "icon_pack", ICONS.hp or "heart",    nil, LAYER.icon, "hud_hp_icon"),
+        _sprite(_copy_T(icon_T.full),          "icon_pack", ICONS.full or "muffin", nil, LAYER.icon, "hud_full_icon"),
+        _sprite(_copy_T(icon_T.money),         "icon_pack", ICONS.money or "coin",  nil, LAYER.icon, "hud_money_icon"),
+    }) end
+    if _show_part("bars") then _push_all(children, {
+        _sprite(_copy_T(bar_bg.hp),   "ui_pack", "btn_mask", BAR_BG.hp or { 1, 1, 1, 0.46 },   LAYER.bar - 1, "hud_hp_bar_bg"),
+        _sprite(_copy_T(bar_bg.full), "ui_pack", "btn_mask", BAR_BG.full or { 1, 1, 1, 0.46 }, LAYER.bar - 1, "hud_full_bar_bg"),
+    }) end
 
     return {
         style         = "empty_container",  T           = panel_T,
@@ -71,10 +79,10 @@ function M.create_panel(gm, side, stats)
     panel.hud_side, panel.hud_stats = side, stats
     panel.hud_profile_T             = Common.profile_T(side)
 
-    panel.hud_bars = {
+    panel.hud_bars = _show_part("bars") and {
         Bars.hud_bar(Layout.bars[1]),
         Bars.hud_bar(Layout.bars[2]),
-    }
+    } or {}
 
     Parallax.apply_panel(panel)
     Bars.attach_draw(panel)

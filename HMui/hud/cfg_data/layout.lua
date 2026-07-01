@@ -13,6 +13,11 @@ M.layer = {
     icon            = 50,       bar             = 60,
 }
 
+-----------------------------
+--- temporary layout tuning
+----------------------------
+M.show = { icons = N, bars = N }
+
 --------------------------------------------
 --- drawing panel 
 --------------------------------------------
@@ -23,13 +28,13 @@ M.hud = {
 }
 
 M.panel = {
-    player = { x = 0,              y_from_bottom = 4.0, w = 5.8 },
+    player = { x = 0,              y_from_bottom = 4.0, w = 6.5 },
     foe    = { x_from_right = 6.2, y = 0.55,            w = 5.35, h = 2.35 },
 }
 M.panel_pass = { x = -0.05, y = -0.05, w_pad = 0.10 } -- wh_ratio = 1.88
 
-M.panel_2       = { x = -0.1, y = 2.9,   w = 5.9 }
-M.panel_2_pass  = { x = -0.1, y = -0.05, w_pad = 0.15, wh_ratio = 5.55 } -- wh_ratio = 5.98
+M.panel_2       = { x_from_right = 0.02, y = 2.55,   w = 4.58 }
+M.panel_2_pass  = { x = -0.1, y = -0.035,  w_pad = 0.15, wh_ratio = 4.85 } -- wh_ratio 
 
 ----------------------------------------------
 --- profile
@@ -45,8 +50,8 @@ M.profile_mask  = {
     atlas_key = "hud_pack",        quad_key = "hud_masks",
     
     --- pos
-    x         = -1,                y         = 0,  
-    w         = 1,                 fit_axis  = "width",
+    x         = 4,                 y         = 0,  
+    w         = 1.3,               fit_axis  = "width",
     relative  = Y,                   
     
     --- color 
@@ -58,8 +63,8 @@ M.profile_mask  = {
     source_px_h       = 1300,      canvas_pad = { x = 1.0, y = 2.0 },  --- controls the resolution of inner pic. 
     canvas_scale_max  = 5,
     
-    extension = { atlas_key = "hud_pack", quad_key = "hud_masks_extension",  x = -1, y = 0, w = 1, fit_axis = "width", relative = Y, draw = Y, tint = { 0.45, 0.8, 1, 0.55 } },
-    contour   = { atlas_key = "hud_pack", quad_key = "profile_outer",        x = -1, y = 0, w = 2, fit_axis = "width", relative = Y, tint = { 1, 1, 1, 1 } },
+    extension = { atlas_key = "hud_pack", quad_key = "hud_masks_extension",  x = -1,  y = 0,   w = 1,    fit_axis = "width", relative = Y, draw = Y, tint = { 0.45, 0.8, 1, 0.55 } },
+    contour   = { atlas_key = "hud_pack", quad_key = "profile_outer",        x = 0.08,  y = 0.1, w = 1.4, fit_axis = "width", relative = Y, tint = { 1, 1, 1, 1 } },
 }
 
 M.profile_chara = { 
@@ -75,9 +80,9 @@ M.icons = {
         player = { x = 0.18, y = 0.22, w = 0.82, h = 0.82 },
         foe    = { x = 4.08, y = 0.22, w = 0.82, h = 0.82 },
     },
-    hp    = { x = 1.42, y = 0.32, w = 0.36, h = 0.36 },
-    full  = { x = 1.42, y = 0.92, w = 0.36, h = 0.36 },
-    money = { x = 1.42, y = 1.52, w = 0.36, h = 0.36 },
+    hp    = { x = 2.42, y = 0.32, w = 0.36, h = 0.36 },
+    full  = { x = 2.42, y = 0.92, w = 0.36, h = 0.36 },
+    money = { x = 2.42, y = 1.52, w = 0.36, h = 0.36 },
 }
 
 -------------------------------------------

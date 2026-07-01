@@ -1,8 +1,8 @@
 local C = require("HMfns.animate.color.color_const")
 
 local CHUD = C.HUD
-local cw = C.WHITE
-local chk, ccrm = CHUD.DARK, C.CREAM
+local cw,  cel   = C.WHITE,   CHUD.LIGHT_EDGE
+local chk, ccrm  = CHUD.DARK, C.CREAM
 local chb    = CHUD.BLUE_THEME
 local cshdw  = { 0, 0, 0, 0.28 }
 
@@ -17,7 +17,7 @@ M.clear = C.CLEAR
 -----------------------------
 M.panel = {
     --- basic colors
-    pass_tint   = ccrm,     base_tint   = cw,      -- pass_tint is for the underlying white-ish shadow 
+    pass_tint   = cel,     base_tint   = cw,      -- pass_tint is for the underlying white-ish shadow 
 
     --- shadow
     shadow      = Y,        shadow_color = cshdw,
@@ -36,10 +36,10 @@ M.profile = {
         enabled = Y, color = cshdw, widget_dist = 1, order = "per_stroke",
         shadow_parallax = { x = 0.08, y = -1 },
     },
-    icon = {
-        player = "chef_hat",
-        foe    = "chat",
-    },
+    -- icon = {
+    --     player = "chef_hat",
+    --     foe    = "chat",
+    -- },
 }
 
 -----------------------------

@@ -63,6 +63,9 @@ function M.panel_T(gm, side)
     return M.apply_hud_T({ x = cfg.x, y = RT.h - cfg.y_from_bottom, w = cfg.w, h = h }, side)
 end
 
-function M.panel_2_T(gm, cfg) return { x = cfg.x, y = cfg.y, w = cfg.w, h = cfg.h or M.fit_h(gm, "ui_pack", "panel_2", cfg.w) } end
+--- Helper: child x
+local function _child_x(cfg, parent_T) if cfg.x_from_right and parent_T then return parent_T.w - cfg.x_from_right - cfg.w end; return cfg.x or 0 end
+
+function M.panel_2_T(gm, cfg, parent_T) return { x = _child_x(cfg, parent_T), y = cfg.y, w = cfg.w, h = cfg.h or M.fit_h(gm, "ui_pack", "panel_2", cfg.w) } end
 
 return M
