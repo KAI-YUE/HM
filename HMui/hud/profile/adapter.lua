@@ -11,6 +11,7 @@ local Y, N = true, false
 local M = {}
 
 local LAYER = Layout.layer
+local MAX_EXTS = 3
 local push_draw_trans = Render.push_actor_draw_transform
 local _mask_shader
 
@@ -24,15 +25,21 @@ local function _shader()
         extern vec4 canvas_rect;
         extern vec4 mask_rect;
         extern vec4 mask_uv_rect;
-        extern vec4 ext_rect;
-        extern vec4 ext_uv_rect;
+        extern vec4 ext_rect_1;
+        extern vec4 ext_uv_rect_1;
+        extern vec4 ext_rect_2;
+        extern vec4 ext_uv_rect_2;
+        extern vec4 ext_rect_3;
+        extern vec4 ext_uv_rect_3;
         extern vec2 canvas_px;
         extern vec2 mask_texel;
         extern number canvas_scale;
         extern number alpha_cutoff;
         extern number edge_feather;
         extern number edge_px;
-        extern number ext_enabled;
+        extern number ext_enabled_1;
+        extern number ext_enabled_2;
+        extern number ext_enabled_3;
 
         number mask_alpha_at(vec2 uv, vec4 uv_rect)
         {
@@ -58,8 +65,12 @@ local function _shader()
             vec2 local_xy = canvas_rect.xy + uv * canvas_px / max(canvas_scale, 0.0001);
             vec2 mask_uv = (local_xy - mask_rect.xy) / max(mask_rect.zw, vec2(0.0001));
             number a = mask_sample(mask_uv, mask_uv_rect);
-            vec2 ext_uv = (local_xy - ext_rect.xy) / max(ext_rect.zw, vec2(0.0001));
-            a = max(a, mask_sample(ext_uv, ext_uv_rect) * ext_enabled);
+            vec2 ext_uv_1 = (local_xy - ext_rect_1.xy) / max(ext_rect_1.zw, vec2(0.0001));
+            vec2 ext_uv_2 = (local_xy - ext_rect_2.xy) / max(ext_rect_2.zw, vec2(0.0001));
+            vec2 ext_uv_3 = (local_xy - ext_rect_3.xy) / max(ext_rect_3.zw, vec2(0.0001));
+            a = max(a, mask_sample(ext_uv_1, ext_uv_rect_1) * ext_enabled_1);
+            a = max(a, mask_sample(ext_uv_2, ext_uv_rect_2) * ext_enabled_2);
+            a = max(a, mask_sample(ext_uv_3, ext_uv_rect_3) * ext_enabled_3);
             number m = smoothstep(alpha_cutoff, alpha_cutoff + max(edge_feather, 0.0001), a);
             return vec4(src.rgb, src.a * m);
         }
@@ -72,19 +83,28 @@ local function _uv_rect(rect, iw, ih)
     return { qx/iw, qy/ih, qw/iw, qh/ih }
 end
 
-local function _send_shader(shader, canvas, ox, oy, cs, r, ext_r, cfg)
+-----------------------------
+--- extension slots
+----------------------------
+--- Helper: extension shader slot
+local function _send_ext_slot(shader, i, ext_r, r, uv, iw, ih)
+    shader:send("ext_rect_"..i, ext_r and { ext_r.x, ext_r.y, ext_r.w, ext_r.h } or { r.x, r.y, r.w, r.h })
+    shader:send("ext_uv_rect_"..i, ext_r and _uv_rect(ext_r, iw, ih) or uv)
+    shader:send("ext_enabled_"..i, ext_r and 1 or 0)
+end
+
+local function _send_shader(shader, canvas, ox, oy, cs, r, ext_rs, cfg)
     local qx, qy, qw, qh = r.quad:getViewport()
     local iw, ih = r.atlas.image:getDimensions()
+    local uv = { qx/iw, qy/ih, qw/iw, qh/ih }
     shader:send("mask_tex", r.atlas.image)
     shader:send("canvas_rect", { -ox, -oy, canvas:getWidth()/cs, canvas:getHeight()/cs })
     shader:send("canvas_px", { canvas:getWidth(), canvas:getHeight() })
     shader:send("mask_texel", { 1/iw, 1/ih })
     shader:send("canvas_scale", cs)
     shader:send("mask_rect", { r.x, r.y, r.w, r.h })
-    shader:send("mask_uv_rect", { qx/iw, qy/ih, qw/iw, qh/ih })
-    shader:send("ext_rect", ext_r and { ext_r.x, ext_r.y, ext_r.w, ext_r.h } or { r.x, r.y, r.w, r.h })
-    shader:send("ext_uv_rect", ext_r and _uv_rect(ext_r, iw, ih) or { qx/iw, qy/ih, qw/iw, qh/ih })
-    shader:send("ext_enabled", ext_r and 1 or 0)
+    shader:send("mask_uv_rect", uv)
+    for i = 1, MAX_EXTS do _send_ext_slot(shader, i, ext_rs and ext_rs[i], r, uv, iw, ih) end
     shader:send("alpha_cutoff", cfg.alpha_cutoff or cfg.alpha or 0.05)
     shader:send("edge_feather", cfg.edge_feather or cfg.feather or 0.035)
     shader:send("edge_px", cfg.edge_px or cfg.feather_px or 1.25)
@@ -97,8 +117,8 @@ function M.draw_profile_masked(panel, child, draw_fn, opts)
     local cfg = Mask.cfg(opts); if not cfg then return draw_fn(panel, child) end
     local canvas, ox, oy, cs = Canvas.render(panel, child, draw_fn, cfg); if not canvas then return end
     local r = Mask.rect(panel, child, cfg); if not r then return end
-    local ext_cfg = Mask.sub_cfg(cfg, "extension")
-    local ext_r = ext_cfg and Mask.rect(panel, child, ext_cfg)
+    local ext_rs = {}
+    for _, ext_cfg in ipairs(Mask.sub_cfgs(cfg, "extension")) do ext_rs[#ext_rs + 1] = Mask.rect(panel, child, ext_cfg) end
 
     local old_shader, old_color = LG.getShader(), { LG.getColor() }
     local shader = _shader()
@@ -106,9 +126,9 @@ function M.draw_profile_masked(panel, child, draw_fn, opts)
     push_draw_trans(child)
     LG.scale(1/child.rcfg.tile_size)
     Mask.draw_visible(panel, child, cfg)
-    Mask.draw_visible_sub(panel, child, cfg, "extension")
+    Mask.draw_visible_subs(panel, child, cfg, "extension")
     LG.setColor(1, 1, 1, 1)
-    _send_shader(shader, canvas, ox, oy, cs, r, ext_r, cfg)
+    _send_shader(shader, canvas, ox, oy, cs, r, ext_rs, cfg)
     LG.setShader(shader)
     LG.draw(canvas, -ox, -oy, 0, 1/cs, 1/cs)
     LG.setShader(old_shader)
