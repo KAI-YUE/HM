@@ -20,6 +20,19 @@ function M.pass_T(T, pass)           local out = M.padded_T(T, pass or {}, N); i
 function M.pass_fit(pass)            return pass and pass.wh_ratio and { fit_axis = "none" } or { fit_axis = "width" } end
 function M.profile_T(side)           return M.copy_T(Layout.profile[side]) end
 
+--- Helper: hud root T
+local function _hud_T_cfg(side)
+    local cfg, side_cfg = Layout.hud or {}, Layout.hud and Layout.hud[side] or {}
+    return cfg, side_cfg or {}
+end
+
+function M.apply_hud_T(T, side)
+    local cfg, side_cfg = _hud_T_cfg(side)
+    T.x, T.y = (T.x or 0) + (cfg.x or 0) + (side_cfg.x or 0), (T.y or 0) + (cfg.y or 0) + (side_cfg.y or 0)
+    T.scale = (T.scale or 1) * (cfg.scale or 1) * (side_cfg.scale or 1)
+    return T
+end
+
 -----------------------------
 --- assets
 ----------------------------
@@ -46,8 +59,8 @@ function M.stroke_child(T, strokes, color, order, opts) return M.with({ style = 
 function M.panel_T(gm, side)
     local RT, cfg = gm._room.T or { w = 24, h = 13.5 }, Layout.panel[side]
     local h = cfg.h or M.fit_h(gm, "ui_pack", "panel_1", cfg.w)
-    if side == "foe" then return { x = RT.w - cfg.x_from_right, y = cfg.y, w = cfg.w, h = h } end
-    return { x = cfg.x, y = RT.h - cfg.y_from_bottom, w = cfg.w, h = h }
+    if side == "foe" then return M.apply_hud_T({ x = RT.w - cfg.x_from_right, y = cfg.y, w = cfg.w, h = h }, side) end
+    return M.apply_hud_T({ x = cfg.x, y = RT.h - cfg.y_from_bottom, w = cfg.w, h = h }, side)
 end
 
 function M.panel_2_T(gm, cfg) return { x = cfg.x, y = cfg.y, w = cfg.w, h = cfg.h or M.fit_h(gm, "ui_pack", "panel_2", cfg.w) } end

@@ -35,6 +35,18 @@ function M.quad(gm, cfg)
     return atlas, quad
 end
 
+function M.sub_cfg(cfg, key)
+    local sub = cfg and cfg[key]; if type(sub) ~= "table" then return end
+    return {
+        atlas_key = sub.atlas_key or cfg.atlas_key,
+        quad_key  = sub.quad_key,
+        x = sub.x, y = sub.y, w = sub.w, h = sub.h, r = sub.r,
+        relative = sub.relative ~= nil and sub.relative or cfg.relative,
+        fit_axis = sub.fit_axis or cfg.fit_axis,
+        draw = sub.draw, tint = sub.tint,
+    }
+end
+
 function M.rect(panel, child, cfg)
     local gm, box = panel and panel.gm, M.box(child, cfg); if not (gm and box) then return end
     local atlas, quad = M.quad(gm, cfg); if not quad then return end
@@ -56,6 +68,14 @@ function M.draw_visible(panel, child, cfg)
     local tint = cfg.tint or { 1, 1, 1, 0.42 }
     LG.setColor(tint[1] or 1, tint[2] or 1, tint[3] or 1, tint[4] or 1)
     M.draw(panel, child, cfg)
+    LG.setColor(1, 1, 1, 1)
+end
+
+function M.draw_visible_sub(panel, child, cfg, key)
+    local sub = M.sub_cfg(cfg, key); if not (sub and sub.draw ~= N) then return end
+    local tint = sub.tint or cfg.tint or { 1, 1, 1, 0.42 }
+    LG.setColor(tint[1] or 1, tint[2] or 1, tint[3] or 1, tint[4] or 1)
+    M.draw(panel, child, sub)
     LG.setColor(1, 1, 1, 1)
 end
 
