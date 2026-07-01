@@ -17,23 +17,13 @@ M.layer = {
 --- drawing panel 
 --------------------------------------------
 M.panel = {
-    player = { x = 1.5, y_from_bottom = 4.0, w = 5.8 },
-    foe    = { x_from_right = 6.2, y = 0.55, w = 5.35, h = 2.35 },
+    player = { x = 5,              y_from_bottom = 4.0, w = 5.8 },
+    foe    = { x_from_right = 6.2, y = 0.55,            w = 5.35, h = 2.35 },
 }
 M.panel_pass = { x = -0.05, y = -0.05, w_pad = 0.10 } -- wh_ratio = 1.88
-M.panel_seam = {
-    x = 0, y = 0, w_pad = 0,
-    dash = "dash_1", gap_px = 9, scale = 1.0,
-    points = { { 0.055, 0.190 }, { 0.170, 0.075 }, { 0.825, 0.070 }, { 0.955, 0.180 }, { 0.970, 0.765 }, { 0.855, 0.915 }, { 0.120, 0.925 }, { 0.040, 0.760 } },
-}
 
 M.panel_2       = { x = -0.1, y = 2.9, w = 5.9 }
 M.panel_2_pass  = { x = -0.1, y = -0.05, w_pad = 0.15, wh_ratio = 5.55 } -- wh_ratio = 5.98
-M.panel_2_seam  = {
-    x = 0, y = 0, w_pad = 0,
-    dash = "dash_1", gap_px = 9, scale = 1.0,
-    points = { { 0.035, 0.250 }, { 0.100, 0.090 }, { 0.900, 0.090 }, { 0.965, 0.250 }, { 0.925, 0.800 }, { 0.080, 0.800 } },
-}
 
 ----------------------------------------------
 --- profile
@@ -43,11 +33,20 @@ M.profile = {
     foe    = { x = 3.72,  y = -0.20, w = 1.95, h = 2.32 },
 }
 
+--- profile_mask 
 M.profile_mask  = { 
-    atlas_key = "icon_pack",    quad_key = "paper-1",
-    x = -1,  y = 0,         w = 3,      h = 1, 
-    relative = Y,           alpha_cutoff = 0.05,    -- mask texture alpha threshold; higher removes softer edge pixels
-    draw = Y,               tint = { 1, 1, 1, 1 } 
+    --- basics 
+    atlas_key = "hud_pack",        quad_key = "hud_masks",
+    
+    --- pos
+    x = -1,                         y = 0,  
+    w = 1,                          fit_axis = "width",
+    relative = Y,                   
+    
+    --- color 
+    alpha_cutoff = 0.05,            edge_feather = 0.035, edge_px = 1.25, -- mask texture alpha threshold; higher removes softer edge pixels
+    draw = Y,                       tint = { 1, 1, 1, 1 }, canvas_pad = { x = 1.0, y = 3.0 }, source_px_h = 1300, canvas_scale_max = 5,
+    contour = { atlas_key = "hud_pack", quad_key = "profile_outer", x = -1, y = 0, w = 2, fit_axis = "width", relative = Y, tint = { 1, 1, 1, 1 } },
 }
 
 M.profile_chara = { 

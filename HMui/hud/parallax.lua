@@ -1,4 +1,4 @@
-local Theme = require("HMui.hud.theme")
+local Theme = require("HMui.hud.cfg_data.theme")
 
 local M = {}
 

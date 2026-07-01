@@ -1,5 +1,5 @@
 local C      = require("HMfns.animate.color.color_const")
-local Theme  = require("HMui.hud.theme")
+local Theme  = require("HMui.hud.cfg_data.theme")
 
 local LG       = love.graphics
 local min, max = math.min, math.max

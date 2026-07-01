@@ -1,5 +1,5 @@
 local C      = require("HMfns.animate.color.color_const")
-local Layout = require("HMui.hud.layout")
+local Layout = require("HMui.hud.cfg_data.layout")
 
 local cw    = C.WHITE
 local Y, N  = true, false

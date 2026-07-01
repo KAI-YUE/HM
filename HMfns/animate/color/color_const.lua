@@ -22,7 +22,8 @@ local C = {
     },
 
     HUD = {
-       DARK = _hex("#423D3AFF"),            BLUE_THEME = _hex("#70A39EFF"),
+       DARK = _hex("#423D3AFF"),           LIGHT_EDGE = _hex("#F3ECDEFF"),  
+       BLUE_THEME = _hex("#70A39EFF"),
     },
 
     UI = {

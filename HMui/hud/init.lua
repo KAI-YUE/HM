@@ -1,18 +1,17 @@
 local C         = require("HMfns.animate.color.color_const")
 local HMPanel   = require("HMEng.ui_actors.hm_panel")
-local Layout    = require("HMui.hud.layout")
-local Theme     = require("HMui.hud.theme")
+local Layout    = require("HMui.hud.cfg_data.layout")
+local Theme     = require("HMui.hud.cfg_data.theme")
 local Common    = require("HMui.hud.common")
 local Profile   = require("HMui.hud.profile")
 local Bars      = require("HMui.hud.bars")
-local Seam      = require("HMui.hud.seam")
 local Parallax  = require("HMui.hud.parallax")
 
 local _sprite   = Common.sprite
 local _pass_T   = Common.pass_T
 local _copy_T   = Common.copy_T
 
-local crm, cw = C.CREAM, C.WHITE
+local crm, cw  = C.CREAM, C.WHITE
 
 local Y, N = true, false
 
@@ -38,10 +37,10 @@ local function _panel_args(gm, side)
     local icon_T,       bar_bg        = Layout.icons,                                   Layout.bar_bg
     
     local children = {
-        _sprite(_pass_T(panel_1_T, panel_pass),                         "hud_pack", "panel_1", PANEL.pass_tint or crm, LAYER.panel - 1, "hud_panel_pass", Common.with(Common.with({}, panel_shadow), Common.pass_fit(panel_pass))),
+        _sprite(_pass_T(panel_1_T, panel_pass),                         "hud_pack", "panel_1_mask", PANEL.pass_tint or crm, LAYER.panel - 1, "hud_panel_pass", Common.with(Common.with({}, panel_shadow), Common.pass_fit(panel_pass))),
         _sprite({ x = 0, y = 0, w = panel_T.w },                        "hud_pack", "panel_1", PANEL.base_tint or cw,  LAYER.panel, "hud_panel_1", { fit_axis = "width" }),
-        _sprite(_pass_T(panel_2_T, panel_2_pass),                       "hud_pack", "panel_2", PANEL.detail_pass_tint or PANEL.pass_tint or crm, LAYER.panel, "hud_panel_2_pass", Common.pass_fit(panel_2_pass)),
-        _sprite({ x = panel_2_T.x, y = panel_2_T.y, w = panel_2_T.w },  "hud_pack",  "panel_2", PANEL.detail_tint or PANEL.base_tint or cw, LAYER.panel + 1, "hud_panel_2", { fit_axis = "width" }),
+        _sprite(_pass_T(panel_2_T, panel_2_pass),                       "hud_pack", "panel_2_mask", PANEL.pass_tint or crm, LAYER.panel, "hud_panel_2_pass", Common.pass_fit(panel_2_pass)),
+        _sprite({ x = panel_2_T.x, y = panel_2_T.y, w = panel_2_T.w },  "hud_pack", "panel_2", PANEL.base_tint or cw, LAYER.panel + 1, "hud_panel_2", { fit_axis = "width" }),
     }
 
     local profile_icon = PROFILE.icon and PROFILE.icon[side] or (foe and "chat" or "chef_hat")
@@ -68,7 +67,6 @@ end
 ---_______________________________________
 function M.create_panel(gm, side, stats)
     local panel   = HMPanel(gm, _panel_args(gm, side))
-    local p2, p2s = Layout.panel_2, Layout.panel_2_seam or {}
 
     panel.hud_side, panel.hud_stats = side, stats
     panel.hud_profile_T             = Common.profile_T(side)
@@ -79,8 +77,6 @@ function M.create_panel(gm, side, stats)
     }
 
     Parallax.apply_panel(panel)
-    Seam.attach(panel)
-    Seam.attach(panel, Seam.cfg(Common.panel_2_T(gm, p2), p2s), LAYER.panel + 2)
     Bars.attach_draw(panel)
     return panel
 end
