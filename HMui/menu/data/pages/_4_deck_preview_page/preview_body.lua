@@ -23,6 +23,12 @@ local function suit_label(gm, suit)
     return text or fallback
 end
 
+--- Helper: suit label font type
+local function suit_label_font_type(gm, cfg)
+    local font_type = gm.selected_lang and gm.selected_lang.font_type
+    return font_type and cfg.font_variant and font_type .. "_" .. cfg.font_variant
+end
+
 --- Helper: suit_tag
 local function suit_tag(gm, suit)
     local cfg, key, fallback = Data.body.suit_tag, tostring(suit), Suits.names[suit] or tostring(suit or "?")
@@ -45,6 +51,7 @@ local function suit_tag(gm, suit)
         label_w           = cfg.label_T.w,                    label_h              = cfg.label_T.h,
         label_text_scale  = cfg.text_scale,                   label_color          = C.UI.TEXT_DARK,
         label_idle_color  = C.UI.TEXT_DARK,                   label_lang           = gm.selected_lang,
+        label_font_type   = suit_label_font_type(gm, cfg),
         label_i18n_type   = "ui",                             label_i18n_scope     = "deck_preview.suits",
         label_i18n_key    = key,                              label_i18n_fallback  = fallback,
         label_align       = { x = "center", y = "middle" },   label_shadow         = N,

@@ -6,6 +6,12 @@ local Y, N = true, false
 
 local M = {}
 
+--- Helper: move item tree with major
+local function _move_with_major(child)
+    if child.move_with_major then child:move_with_major(0) end
+    for _, sub in ipairs(child.children or {}) do _move_with_major(sub) end
+end
+
 --- Helper: place item
 local function _place(self, child, axis, pos, visible, drawn)
     local base, cfg = child.scrollable_item_base or child.T, self.config
@@ -18,7 +24,7 @@ local function _place(self, child, axis, pos, visible, drawn)
     child.role.offset.x, child.role.offset.y = child.T.x, child.T.y
     child.states.visible, child.scrollable_item_visible = drawn, visible
     child.disable_button = child.scrollable_item_disabled or self.disable_button or not visible
-    if child.move_with_major then child:move_with_major(0) end
+    _move_with_major(child)
 end
 
 -----------------------------

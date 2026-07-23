@@ -1,6 +1,4 @@
-local C         = require("HMfns.animate.color.color_const")
 local I18N      = require("HMfns.utils.format.i18n_utils")
-local IconBtn   = require("HMEng.ui_actors.hm_panel.prototype.icon_btn.default")
 local Tree      = require("HMEng.ui_actors.common.tree")
 local Data      = require("HMui.menu.data.pages._4_deck_preview_page.preview_layout")
 local Floating  = require("HMui.menu.data.pages._4_deck_preview_page.anims.floating_tabs")
@@ -8,7 +6,7 @@ local TabBtn    = require("HMEng.ui_actors.hm_panel.prototype.icon_btn.variants.
 
 local i18n  = I18N.i18n
 
-local Y, N  = true, false
+local N = false
 
 local M = {}
 
@@ -59,44 +57,12 @@ local function tab_btn(gm, def, hook, selected)
     })
 end
 
---- Helper: close_btn
-local function close_btn(def, hook)
-    local T = def.T
-    local args = {
-        --- basics
-        id           = "deck_view_" .. def.key,     T = T,
-
-        --- bg setting
-        bg_style     = "rbox",                      bg_atlas_key  = "ui_pack",
-        bg_quad_key  = def.mask,                    bg_w          = T.w,
-        bg_h         = T.h,                         bg_shadow     = Y,
-
-        --- icon setting
-        icon_quad_key  = def.icon,                  icon_x  = 0.14,
-        icon_y         = 0.10,                      icon_w  = 0.34,
-
-        --- label setting
-        label          = def.label,                 label_x           = 0.58,
-        label_y        = 0.08,                      label_w           = T.w - 0.66,
-        label_h        = 0.36,                      label_text_scale  = 0.28,
-        label_color    = C.UI.TEXT_DARK,        
-        
-        --- hit setting 
-        hover_arrow  = N,
-        button       = Y,                           can_hover  = Y,
-        can_click    = Y,                           hook_fn    = tab_hook(hook, def.key),
-    }
-    args.style = IconBtn(args)
-    return args
-end
-
 ---________________________________
 --- main: build
 ---________________________________
 function M.build(gm, selected, hooks)
     local hooks, widgets = hooks or {}, {}
     for idx, def in ipairs(Data.ordered) do widgets[idx] = tab_btn(gm, def, hooks.switch_page, selected) end
-    widgets[#widgets + 1] = close_btn(Data.close, hooks.close)
     return widgets
 end
 

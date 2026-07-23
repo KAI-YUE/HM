@@ -23,6 +23,7 @@ M.lang_defs = {
     ja        = { font_type = "SAB" },
     ko        = { font_type = "SAB" },
     pt_BR     = { font_type = "SAB" },
+    ru        = { font_type = "SAB" },
     zh_CN     = { font_type = "ZCOOLXW" },
     zh_TW     = { font_type = "SAB" },
 }

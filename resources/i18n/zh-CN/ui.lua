@@ -5,7 +5,7 @@ return {
             l_label = "简体中文",
             deck_preview = {
                 tabs = { remaining = "剩余牌组", full_deck = "完整牌组" },
-                suits = { F = "火焰", W = "水流", M = "月亮", R = "辐射", E = "电力", D = "方块", H = "红桃", C = "梅花", S = "黑桃", SM = "烟雾" },
+                suits = { F = "火焰", W = "水灵", M = "玄月", R = "暗能", E = "电力", D = "方块", H = "红心", C = "梅花", S = "黑桃", SM = "烟雾" },
             },
             b_play_cap = "开始",
             b_options_cap = "设置",

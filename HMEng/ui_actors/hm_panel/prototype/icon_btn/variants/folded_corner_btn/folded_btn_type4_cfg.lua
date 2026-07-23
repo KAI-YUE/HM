@@ -60,7 +60,7 @@ M.frame = {
 
     --- top related
     top_left     = { quad_key = "btn4_type1_top_left",     x            = 0.18,     y      = _top_sink + 0.07,  w_ratio = 0.14 },
-    top          = { quad_key = "btn4_type1_top",          gap          = 1.2,      y      = _top_sink - 0.04,  w_ratio = 0.77, scale = 2 },
+    top          = { quad_key = "btn4_type1_top",          gap          = 1.1,      y      = _top_sink - 0.04,  w_ratio = 0.77, scale = 2 },
     top_right    = { quad_key = "btn4_type1_top_right",    gap          = 0.17,     y      = _top_sink + 0.05,  w_ratio = 0.14 },
 
     --- right edge

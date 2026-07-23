@@ -71,6 +71,7 @@ function M.handle_escape(gm)
     local gUI, ST   = gm.UI,            gm.g_state
     local OM,  STS  = gUI.overlay_menu, gm.g_states
     if gm.CTRL.locks and gm.CTRL.locks.quick_resume then return end
+    if gm.deck and gm.deck.deck_view_session then return gm.deck:close_deck_view() end
     if ConfirmPopup.cancel_active_popup(gm)         then return end
     if gUI.delete_slot_confirm then return require("HMui.menu.data.pages._1_load_2_save_pages._shared.delete_confirm").confirm_delete_slot_no(gm) end
     if gUI.title_page_options  then return require("HMui.menu.menu_mgr").title_page_options_back(gm) end

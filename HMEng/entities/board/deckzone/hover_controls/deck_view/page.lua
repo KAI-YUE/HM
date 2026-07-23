@@ -14,14 +14,13 @@ local M = { default_key = Data.default_key }
 --------------------------------------------------
 --- page data
 --------------------------------------------------
---- Helper: switch_page | close 
+--- Helper: switch_page
 local function switch_page(gm, page_key)  local deck = gm and gm.deck; if deck then return deck:switch_deck_view_page(page_key) end end
-local function close(gm)                  local deck = gm.deck;    if deck then return deck:close_deck_view() end; end
 
 ---______________________________
 --- main: build
 ---______________________________
-function M.build(deck, selected, suits) return DeckPreviewPage.build(deck.gm, selected, { switch_page = switch_page, close = close }, suits) end
+function M.build(deck, selected, suits) return DeckPreviewPage.build(deck.gm, selected, { switch_page = switch_page }, suits) end
 
 --------------------------------------------------
 --- create panel

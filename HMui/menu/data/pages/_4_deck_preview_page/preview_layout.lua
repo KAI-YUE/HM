@@ -40,7 +40,7 @@ M.body = {
     suit_tag = {
         T           = { x = 0.02, y = 0.20, w = 1.28, h = 0.84 },
         label_T     = { x = 0.12, y = 0.12, w = 1.04, h = 0.56 },
-        text_scale  = 0.22,
+        text_scale  = 0.22,                          font_variant = "small_ui",
     },
 }
 
@@ -100,7 +100,6 @@ M.ordered = { --- ordered tab's layout
         },
     },
 }
-M.close = { key = "deck_view_close", label = "", icon = "ex_mark", mask = "tab_mask_2", T = { x = 16.30, y = 0.10, w = 0.68, h = 0.54, r = 0.04 } }
 
 --------------------------------------------------
 --- active tab floating motion
