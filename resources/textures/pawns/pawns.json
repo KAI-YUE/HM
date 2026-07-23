@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "image": "pawns.png",
+    "size": {
+      "w": 93,
+      "h": 150
+    }
+  },
+  "frames": {
+    "barricade": {
+      "frame": {
+        "x": 2,
+        "y": 2,
+        "w": 89,
+        "h": 146
+      }
+    }
+  }
+}

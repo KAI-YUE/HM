@@ -1,0 +1,45 @@
+{
+	"Version": 3,
+	"Parameters": [
+		{
+			"Id": "Param",
+			"GroupId": "",
+			"Name": "main_roll"
+		}
+	],
+	"ParameterGroups": [],
+	"Parts": [
+		{
+			"Id": "Part",
+			"Name": "main_body frames_22"
+		},
+		{
+			"Id": "down_handle",
+			"Name": "down_handle"
+		},
+		{
+			"Id": "up_handle",
+			"Name": "up_handle"
+		},
+		{
+			"Id": "bg",
+			"Name": "bg"
+		},
+		{
+			"Id": "flour",
+			"Name": "flour"
+		},
+		{
+			"Id": "Part2",
+			"Name": "0_30"
+		},
+		{
+			"Id": "Part3",
+			"Name": "30_60"
+		},
+		{
+			"Id": "Part4",
+			"Name": "60_90"
+		}
+	]
+}
